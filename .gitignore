@@ -1,0 +1,10 @@
+.gradle
+build
+gradle
+gradlew
+gradlew.bat
+.idea
+.jqwik-database
+.storage
+.httpCache/
+bin/

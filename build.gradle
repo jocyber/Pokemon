@@ -1,0 +1,51 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'application'
+    id 'com.diffplug.spotless' version '6.25.0'
+    id 'jacoco'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.9
+            }
+        }
+    }
+}
+
+spotless {
+    // ratchetFrom 'origin/master'
+
+    kotlin {
+        target 'src/**/*.kt'
+        ktfmt().kotlinlangStyle()
+    }
+}
+
+tasks.register 'format', {
+    dependsOn 'spotlessApply'
+}
+
+repositories { 
+    mavenCentral()
+}
+
+apply from: file('dependencies.gradle')
+
+test {
+    useJUnitPlatform() {
+        includeEngines 'jqwik'
+    }
+}
+
+kotlin {
+    jvmToolchain 17
+}
+
+application {
+    mainClass = 'pokemongame.PokemonGame'
+}
+
+build.dependsOn format
