@@ -1,22 +1,23 @@
-package pokemongame.scene
+package pokemongame.scene.battle
 
-import com.lehaine.littlekt.graphics.g2d.*
+import com.lehaine.littlekt.graphics.g2d.Animation
+import com.lehaine.littlekt.graphics.g2d.AnimationPlayer
+import com.lehaine.littlekt.graphics.g2d.SpriteBatch
+import com.lehaine.littlekt.graphics.g2d.TextureSlice
+import com.lehaine.littlekt.graphics.g2d.use
 import com.lehaine.littlekt.graphics.slice
 import com.lehaine.littlekt.util.milliseconds
 import kotlin.time.Duration
 import kotlinx.coroutines.runBlocking
+import pokemongame.scene.SCREEN_WIDTH
 
-class BattleSceneController(battleScene: BattleScene) {
-    private val batch: SpriteBatch
-    private val battleScene: BattleScene
+class BattleSceneController(private val battleScene: BattleScene) {
+    private val batch: SpriteBatch = SpriteBatch(battleScene.context)
 
     private val animationPlayer: AnimationPlayer<TextureSlice>
     private val enemyAnimation: Animation<TextureSlice>
 
     init {
-        this.batch = SpriteBatch(battleScene.context)
-        this.battleScene = battleScene
-
         val enemyPokemon = battleScene.enemyPokemon
 
         // move animations to battle scene
@@ -34,8 +35,8 @@ class BattleSceneController(battleScene: BattleScene) {
         this.enemyAnimation =
             Animation(
                 frames = enemySlices,
-                frameIndices = (0 ..< enemySlices.size).toList(),
-                frameTimes = (0 ..< enemySlices.size).map { idleMillis.milliseconds }
+                frameIndices = enemySlices.indices.toList(),
+                frameTimes = enemySlices.map { IDLE.milliseconds }
             )
 
         animationPlayer.playLooped(enemyAnimation)
@@ -80,6 +81,6 @@ class BattleSceneController(battleScene: BattleScene) {
     }
 
     companion object {
-        const val idleMillis = 3500f / 60f
+        const val IDLE = 3500f / 60f
     }
 }

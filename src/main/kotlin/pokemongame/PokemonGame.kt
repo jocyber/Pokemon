@@ -6,10 +6,10 @@ import com.lehaine.littlekt.createLittleKtApp
 import com.lehaine.littlekt.file.vfs.readTexture
 import com.lehaine.littlekt.graphics.gl.ClearBufferMask
 import pokemongame.pokemon.Zigzagoon
-import pokemongame.scene.BattleScene
-import pokemongame.scene.BattleSceneController
 import pokemongame.scene.SCREEN_HEIGHT
 import pokemongame.scene.SCREEN_WIDTH
+import pokemongame.scene.battle.BattleScene
+import pokemongame.scene.battle.BattleSceneController
 
 object PokemonGame {
     @JvmStatic

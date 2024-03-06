@@ -1,4 +1,4 @@
-package pokemongame.scene
+package pokemongame.scene.battle
 
 import com.lehaine.littlekt.Context
 import com.lehaine.littlekt.graphics.Texture
