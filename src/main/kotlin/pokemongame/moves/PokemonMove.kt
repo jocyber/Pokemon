@@ -1,6 +1,7 @@
 package pokemongame.moves
 
-import com.lehaine.littlekt.graphics.g2d.Animation
+import kotlin.time.Duration
+import pokemongame.animations.AnimationUpdate
 import pokemongame.scene.battle.BattleSceneState
 import pokemongame.types.PokemonType
 
@@ -12,5 +13,7 @@ sealed interface PokemonMove {
     val isContactMove: Boolean
     val type: PokemonType
 
-    fun attackAnimation(battleSceneState: BattleSceneState): Animation<*>
+    fun attackAnimation(battleSceneState: BattleSceneState, dt: Duration): MoveAnimation
 }
+
+typealias MoveAnimation = List<List<AnimationUpdate>>
