@@ -3,32 +3,48 @@ package pokemongame.animations.movements
 import com.lehaine.littlekt.math.Vec2f
 import com.lehaine.littlekt.util.seconds
 import kotlin.time.Duration
-import pokemongame.animations.MoveAnimationResponse
+import pokemongame.scene.battle.PokemonBattleState
 
+/** A utility class for gliding a Pokemon during a battle scene. */
 data class Glide(
     private val startingPoint: Vec2f,
     private val endingPoint: Vec2f,
     private val seconds: Float,
-) {
-    private val deltaX = (endingPoint.x - startingPoint.x) / seconds
-    private val deltaY = (endingPoint.y - startingPoint.y) / seconds
+    // TODO: Change this to a positionable super type
+    private val pokemonBattleState: PokemonBattleState,
+) : MoveAnimation {
+    private val deltaX: Float
+    private val deltaY: Float
     private val currentPoint = startingPoint.toMutableVec2()
     private val totalDistance = startingPoint.distance(endingPoint)
 
     private var distanceTraveled = 0f
 
-    fun update(dt: Duration): MoveAnimationResponse {
+    init {
+        if (seconds == 0f) {
+            throw IllegalArgumentException("Seconds for a glide animation cannot be zero")
+        }
+
+        deltaX = (endingPoint.x - startingPoint.x) / seconds
+        deltaY = (endingPoint.y - startingPoint.y) / seconds
+    }
+
+    /**
+     * A function that updates the position of the Pokemon. This function mutates the original
+     * Pokemon state.
+     *
+     * @param dt The deltaTime since the last frame.
+     */
+    override fun update(dt: Duration) {
         currentPoint.x += deltaX * dt.seconds
         currentPoint.y += deltaY * dt.seconds
 
         distanceTraveled = startingPoint.distance(currentPoint)
 
-        return MoveAnimationResponse(
-            position = if (!isDone()) currentPoint.toVec2() else endingPoint,
-        )
+        pokemonBattleState.position = if (!isDone()) currentPoint else endingPoint
     }
 
-    fun isDone(): Boolean {
+    override fun isDone(): Boolean {
         return distanceTraveled >= totalDistance
     }
 }

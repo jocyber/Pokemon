@@ -1,15 +1,14 @@
 package pokemongame.moves
 
 import com.lehaine.littlekt.math.Vec2f
-import kotlin.time.Duration
-import pokemongame.animations.AnimationUpdate
-import pokemongame.animations.MoveAnimationResponse
+import pokemongame.animations.MoveAnimationPlayer
 import pokemongame.animations.movements.Glide
 import pokemongame.scene.battle.BattleSceneState
-import pokemongame.scene.battle.Turn
 import pokemongame.types.PokemonType
 
 data object Tackle : PokemonMove {
+    // use Dagger to inject used textures
+
     override val basePower = 40
     override val totalPowerPoints = 25
     override val accuracy = 100
@@ -17,36 +16,24 @@ data object Tackle : PokemonMove {
     override val isContactMove = true
     override val type = PokemonType.NORMAL
 
-    private const val DISTANCE = 50f
+    private const val DISTANCE = 65f
+    private const val TIME = 0.215f
 
-    override fun attackAnimation(battleSceneState: BattleSceneState, dt: Duration): MoveAnimation {
-        return listOf(glide(battleSceneState, dt, -DISTANCE), glide(battleSceneState, dt, DISTANCE))
-    }
+    override fun attackAnimation(battleSceneState: BattleSceneState): MoveAnimationPlayer {
+        val startingPoint = battleSceneState.enemyState.position.toVec2()
+        val endingPoint = Vec2f(startingPoint.x - DISTANCE, startingPoint.y)
 
-    private fun glide(
-        sceneState: BattleSceneState,
-        dt: Duration,
-        distance: Float
-    ): List<AnimationUpdate> {
-        val animations = mutableListOf<MoveAnimationResponse>()
-        val position = sceneState.enemyState.position
+        val glideForward =
+            Glide(startingPoint, endingPoint, seconds = TIME, battleSceneState.enemyState)
+        val glideBack =
+            Glide(endingPoint, startingPoint, seconds = TIME, battleSceneState.enemyState)
 
-        val glide =
-            Glide(
-                startingPoint = sceneState.enemyState.position,
-                endingPoint = Vec2f(position.x + distance, position.y),
-                seconds = .4f
-            )
-
-        do {
-            animations.add(glide.update(dt))
-        } while (!glide.isDone())
-
-        return animations.map {
-            AnimationUpdate(
-                moveAnimationResponse = it,
-                animationTurn = Turn.ENEMY,
-            )
-        }
+        return MoveAnimationPlayer(
+            moveUpdates =
+                arrayOf(
+                    arrayOf(glideForward),
+                    arrayOf(glideBack),
+                )
+        )
     }
 }

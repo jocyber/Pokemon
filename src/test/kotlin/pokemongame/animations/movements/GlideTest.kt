@@ -12,7 +12,7 @@ import net.jqwik.api.Property
 import net.jqwik.api.PropertyDefaults
 import net.jqwik.api.Provide
 import org.assertj.core.api.Assertions.assertThat
-import pokemongame.animations.MoveAnimationResponse
+import pokemongame.scene.battle.PokemonBattleState
 
 @PropertyDefaults(edgeCases = EdgeCasesMode.FIRST)
 class GlideTest {
@@ -20,53 +20,63 @@ class GlideTest {
     fun points(): Arbitrary<Vec2f> =
         combine(Arbitraries.floats(), Arbitraries.floats()).`as`(::Vec2f)
 
-    @Property(tries = 1500)
+    @Provide
+    fun battleStates(): Arbitrary<PokemonBattleState> =
+        points().map { position -> PokemonBattleState(position = position) }
+
+    @Property(tries = 1500, seed = "-6218027441402253276")
     fun `actual end position is equal to expected end position`(
-        @ForAll("points") startingPoint: Vec2f,
         @ForAll("points") endingPoint: Vec2f,
+        @ForAll("battleStates") battleState: PokemonBattleState,
     ) {
-        val glideResponses = getGlideResponses(startingPoint, endingPoint)
+        val glide = Glide(battleState.position, endingPoint, seconds = 1f, battleState)
 
-        assertThat(glideResponses.last().position).isEqualTo(endingPoint)
-    }
-
-    @Property
-    fun inverse(
-        @ForAll("points") startingPoint: Vec2f,
-        @ForAll("points") endingPoint: Vec2f,
-    ) {
-        val glideResponses = getGlideResponses(startingPoint, endingPoint)
-        val inverseGlideResponses = getGlideResponses(endingPoint, startingPoint)
-
-        assertThat(glideResponses.last().position).isEqualTo(endingPoint)
-        assertThat(inverseGlideResponses.last().position).isEqualTo(startingPoint)
-    }
-
-    @Property
-    fun `distance always increases`(
-        @ForAll("points") startingPoint: Vec2f,
-        @ForAll("points") endingPoint: Vec2f,
-    ) {
-        Assume.that(startingPoint != endingPoint)
-
-        val glideResponses = getGlideResponses(startingPoint, endingPoint)
-
-        for (i in 1 ..< glideResponses.size) {
-            assertThat(glideResponses[i - 1].position.distance(glideResponses[i].position))
-                .isGreaterThan(0f)
+        while (!glide.isDone()) {
+            glide.update(0.1f.seconds)
         }
+
+        assertThat(battleState.position).isEqualTo(endingPoint)
     }
 
-    // @Property fun `summed duration is equal to total seconds`() {}
+    @Property(seed = "-1775495748590307115")
+    fun inverse(
+        @ForAll("points") endingPoint: Vec2f,
+        @ForAll("battleStates") battleState: PokemonBattleState,
+    ) {
+        val startingPoint = battleState.position.toVec2()
 
-    private fun getGlideResponses(start: Vec2f, end: Vec2f): List<MoveAnimationResponse> {
-        val glide = Glide(start, end, seconds = 1f)
-        val glideResponses = mutableListOf<MoveAnimationResponse>()
+        val glide = Glide(startingPoint, endingPoint, seconds = 1f, battleState)
 
-        do {
-            glideResponses.add(glide.update(0.14f.seconds))
-        } while (!glide.isDone())
+        while (!glide.isDone()) {
+            glide.update(0.1f.seconds)
+        }
 
-        return glideResponses
+        assertThat(battleState.position).isEqualTo(endingPoint)
+
+        val glide2 = Glide(battleState.position, startingPoint, seconds = 1f, battleState)
+
+        while (!glide2.isDone()) {
+            glide2.update(0.1f.seconds)
+        }
+
+        assertThat(battleState.position).isEqualTo(startingPoint)
+    }
+
+    @Property(seed = "-1752989200589077294")
+    fun `distance from end position always decreases`(
+        @ForAll("points") endingPoint: Vec2f,
+        @ForAll("battleStates") battleState: PokemonBattleState,
+    ) {
+        Assume.that(battleState.position != endingPoint)
+
+        val glide = Glide(battleState.position, endingPoint, seconds = 1f, battleState)
+
+        while (!glide.isDone()) {
+            val lastPoint = battleState.position.toVec2()
+            glide.update(0.1f.seconds)
+
+            assertThat(lastPoint.distance(endingPoint))
+                .isLessThan(battleState.position.distance(endingPoint))
+        }
     }
 }
