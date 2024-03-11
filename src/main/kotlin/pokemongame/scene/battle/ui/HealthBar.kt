@@ -17,8 +17,7 @@ class HealthBar(
     isPlayer: Boolean,
     private val totalHealth: Int,
 ) {
-    @Inject @Named(HEALTH_BAR_TEXTURE)
-    private lateinit var healthBarTexture: Texture
+    @Inject @Named(HEALTH_BAR_TEXTURE) private lateinit var healthBarTexture: Texture
 
     private var currentFrame: Int
     private val slices: List<TextureSlice>
@@ -29,19 +28,21 @@ class HealthBar(
     init {
         this.currentFrame = currentFrameFromPercent(currentHealth, totalHealth)
 
-        slices = if (isPlayer) {
-            healthBarTexture.slice(WIDTH_PLAYER, HEIGHT_PLAYER)[1].toList()
-        } else {
-            healthBarTexture.slice(WIDTH_ENEMY, HEIGHT_ENEMY)[0].toList()
-        }
+        slices =
+            if (isPlayer) {
+                healthBarTexture.slice(WIDTH_PLAYER, HEIGHT_PLAYER)[1].toList()
+            } else {
+                healthBarTexture.slice(WIDTH_ENEMY, HEIGHT_ENEMY)[0].toList()
+            }
 
         val frameIndices = (FRAMES.toInt() downTo 0).toList()
 
-        this.animation = Animation(
-            frames = slices,
-            frameIndices,
-            frameTimes = frameIndices.map { SWITCH_TIME.seconds },
-        )
+        this.animation =
+            Animation(
+                frames = slices,
+                frameIndices,
+                frameTimes = frameIndices.map { SWITCH_TIME.seconds },
+            )
         animationPlayer.play(animation)
     }
 

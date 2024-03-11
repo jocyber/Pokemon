@@ -75,8 +75,8 @@ class GlideTest {
             val lastPoint = battleState.position.toVec2()
             glide.update(0.1f.seconds)
 
-            assertThat(lastPoint.distance(endingPoint))
-                .isLessThan(battleState.position.distance(endingPoint))
+            assertThat(battleState.position.distance(endingPoint))
+                .isLessThan(lastPoint.distance(endingPoint))
         }
     }
 }
