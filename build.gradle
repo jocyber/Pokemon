@@ -5,18 +5,41 @@ plugins {
     id 'jacoco'
 }
 
+final List<String> coverageExclusions = [
+    '**/*.class',
+    '**/PokemonGame.kt',
+    '**/guice/*.kt',
+    '**/pokemon/*.kt',
+]
+
 jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = 0.9
+    violationRules { JacocoViolationRulesContainer violations ->
+        violations.rule { JacocoViolationRule rule ->
+            rule.limit { JacocoLimit limit ->
+                limit.minimum = 0.9
             }
         }
     }
+
+    afterEvaluate {
+        classDirectories.setFrom(classDirectories.files.collect {
+            fileTree(dir: it, exclude: coverageExclusions)
+        })
+    }
 }
 
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+
+// TODO: add detekt and ktlint
+
 spotless {
-    // ratchetFrom 'origin/master'
+    ratchetFrom 'origin/master'
 
     kotlin {
         target 'src/**/*.kt'
@@ -48,4 +71,5 @@ application {
     mainClass = 'pokemongame.PokemonGame'
 }
 
-build.dependsOn format
+check.dependsOn jacocoTestCoverageVerification
+build.dependsOn format, jacocoTestReport

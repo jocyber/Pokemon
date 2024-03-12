@@ -84,17 +84,19 @@ class BattleSceneController(private val battleScene: BattleScene) {
             it.draw(
                 battleScene.playerHealthBar?.animationPlayer!!.currentKeyFrame!!,
                 x = 576f,
-                y = 320f,
+                y = -120f,
                 scaleX = 3f,
                 scaleY = 2.75f,
+                flipY = true,
             )
 
             it.draw(
                 battleScene.enemyHealthBar?.animationPlayer!!.currentKeyFrame!!,
                 x = 0f,
-                y = 40f,
+                y = 140f,
                 scaleX = 3f,
                 scaleY = 2.75f,
+                flipY = true,
             )
         }
     }

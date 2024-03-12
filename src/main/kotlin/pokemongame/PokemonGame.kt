@@ -6,7 +6,7 @@ import com.lehaine.littlekt.ContextListener
 import com.lehaine.littlekt.createLittleKtApp
 import com.lehaine.littlekt.file.vfs.readTexture
 import com.lehaine.littlekt.graphics.gl.ClearBufferMask
-import pokemongame.guice.BattleUiModule
+import pokemongame.guice.BattleSceneModule
 import pokemongame.pokemon.Zigzagoon
 import pokemongame.pokemon.state.Gender
 import pokemongame.pokemon.state.PokemonModel
@@ -32,12 +32,13 @@ object PokemonGame {
 }
 
 class GameCore(context: Context) : ContextListener(context) {
-    val injector = Guice.createInjector(BattleUiModule(context))
+    private val injector = Guice.createInjector(BattleSceneModule(context))
 
     override suspend fun Context.start() {
         val battleScene =
             BattleScene(
                 context,
+                injector = injector,
                 backgroundTexture =
                     resourcesVfs["assets/backgrounds/grass_background.png"].readTexture(),
                 enemyPokemon =

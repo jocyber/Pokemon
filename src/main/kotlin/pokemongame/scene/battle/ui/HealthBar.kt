@@ -1,7 +1,5 @@
 package pokemongame.scene.battle.ui
 
-import com.google.inject.Inject
-import com.google.inject.name.Named
 import com.lehaine.littlekt.graphics.Texture
 import com.lehaine.littlekt.graphics.g2d.Animation
 import com.lehaine.littlekt.graphics.g2d.AnimationPlayer
@@ -10,15 +8,13 @@ import com.lehaine.littlekt.graphics.slice
 import com.lehaine.littlekt.util.seconds
 import kotlin.math.round
 import kotlin.time.Duration
-import pokemongame.guice.HEALTH_BAR_TEXTURE
 
 class HealthBar(
     currentHealth: Int,
     isPlayer: Boolean,
     private val totalHealth: Int,
+    texture: Texture,
 ) {
-    @Inject @Named(HEALTH_BAR_TEXTURE) private lateinit var healthBarTexture: Texture
-
     private var currentFrame: Int
     private val slices: List<TextureSlice>
     private val animation: Animation<TextureSlice>
@@ -30,12 +26,12 @@ class HealthBar(
 
         slices =
             if (isPlayer) {
-                healthBarTexture.slice(WIDTH_PLAYER, HEIGHT_PLAYER)[1].toList()
+                texture.slice(WIDTH_PLAYER, HEIGHT_PLAYER).flatten().toList()
             } else {
-                healthBarTexture.slice(WIDTH_ENEMY, HEIGHT_ENEMY)[0].toList()
+                texture.slice(WIDTH_ENEMY, HEIGHT_ENEMY).flatten().toList()
             }
 
-        val frameIndices = (FRAMES.toInt() downTo 0).toList()
+        val frameIndices = (this.currentFrame downTo 0).toList()
 
         this.animation =
             Animation(
