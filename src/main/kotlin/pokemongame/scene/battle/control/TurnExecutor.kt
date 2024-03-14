@@ -1,8 +1,12 @@
-package pokemongame.scene.battle
+package pokemongame.scene.battle.control
 
+import com.google.inject.Injector
 import kotlin.time.Duration
 import pokemongame.animations.MoveAnimationPlayer
 import pokemongame.moves.Tackle
+import pokemongame.scene.battle.BattleSceneState
+import pokemongame.scene.battle.PokemonBattleState
+import pokemongame.scene.battle.Turn
 
 /**
  * A helper class for executing the attacking phase of a battle. It takes in details of the moves
@@ -13,6 +17,7 @@ import pokemongame.moves.Tackle
 class TurnExecutor(
     private var turn: Turn,
     private val battleState: BattleSceneState,
+    private val injector: Injector,
 ) {
     private enum class State {
         PREPARING_TO_ATTACK,
@@ -51,8 +56,10 @@ class TurnExecutor(
         val doesHit = true
 
         if (doesHit) {
+            val moveAnimation = injector.getInstance(Tackle::class.java)
+
             // take into account multi-hit moves and multi-turn moves
-            moveAnimationPlayer = Tackle.attackAnimation(battleState)
+            moveAnimationPlayer = moveAnimation.attackAnimation(battleState)
             currentState = State.ATTACKING
         } else {
             println("But it missed")

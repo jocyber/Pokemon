@@ -9,13 +9,17 @@ import com.lehaine.littlekt.file.vfs.readTexture
 import com.lehaine.littlekt.graphics.Texture
 import kotlinx.coroutines.runBlocking
 
-class BattleSceneModule(private val context: Context) : AbstractModule() {
+class AnimationTexturesModule(private val context: Context) : AbstractModule() {
     override fun configure() {}
 
     @Provides
     @Singleton
-    @Named(HEALTH_BAR_TEXTURE)
-    fun getHealthTexture(): Texture = runBlocking {
-        context.resourcesVfs["assets/sprites/hp_bar.png"].readTexture()
+    @Named(HIT_EFFECT)
+    fun getHitTexture(): Texture = runBlocking {
+        context.resourcesVfs["$ASSETS_DIR/tackle_effect.png"].readTexture()
+    }
+
+    private companion object {
+        const val ASSETS_DIR = "assets/sprites/moves"
     }
 }

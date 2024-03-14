@@ -6,10 +6,10 @@ import kotlin.time.Duration
 import pokemongame.scene.battle.PokemonBattleState
 
 /** A utility class for gliding a Pokemon during a battle scene. */
-data class Glide(
+class Glide(
     private val startingPoint: Vec2f,
     private val endingPoint: Vec2f,
-    private val seconds: Float,
+    seconds: Float,
     // TODO: Change this to a positionable super type
     private val pokemonBattleState: PokemonBattleState,
 ) : MoveAnimation {

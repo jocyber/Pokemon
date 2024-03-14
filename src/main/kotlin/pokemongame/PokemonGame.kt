@@ -6,6 +6,8 @@ import com.lehaine.littlekt.ContextListener
 import com.lehaine.littlekt.createLittleKtApp
 import com.lehaine.littlekt.file.vfs.readTexture
 import com.lehaine.littlekt.graphics.gl.ClearBufferMask
+import pokemongame.guice.AnimationTexturesModule
+import pokemongame.guice.AnimationsModule
 import pokemongame.guice.BattleSceneModule
 import pokemongame.pokemon.Zigzagoon
 import pokemongame.pokemon.state.Gender
@@ -14,7 +16,7 @@ import pokemongame.scene.SCREEN_HEIGHT
 import pokemongame.scene.SCREEN_WIDTH
 import pokemongame.scene.Weather
 import pokemongame.scene.battle.BattleScene
-import pokemongame.scene.battle.BattleSceneController
+import pokemongame.scene.battle.control.BattleSceneController
 
 object PokemonGame {
     @JvmStatic
@@ -32,7 +34,12 @@ object PokemonGame {
 }
 
 class GameCore(context: Context) : ContextListener(context) {
-    private val injector = Guice.createInjector(BattleSceneModule(context))
+    private val injector =
+        Guice.createInjector(
+            BattleSceneModule(context),
+            AnimationsModule(context),
+            AnimationTexturesModule(context)
+        )
 
     override suspend fun Context.start() {
         val battleScene =

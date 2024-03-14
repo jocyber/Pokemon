@@ -12,7 +12,7 @@ data object Zigzagoon : Pokemon {
     override val frames = 112
     override val type = Pair(PokemonType.NORMAL, null)
 
-    override val movesByLevel = mapOf(1 to Tackle)
+    override val movesByLevel = mapOf(1 to Tackle::class)
     // add growl and tail whip
 
     override suspend fun getTexture(context: Context): Texture =

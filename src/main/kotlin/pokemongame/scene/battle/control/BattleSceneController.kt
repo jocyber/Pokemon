@@ -1,4 +1,4 @@
-package pokemongame.scene.battle
+package pokemongame.scene.battle.control
 
 import com.lehaine.littlekt.graphics.g2d.Animation
 import com.lehaine.littlekt.graphics.g2d.AnimationPlayer
@@ -13,6 +13,10 @@ import kotlin.time.Duration
 import kotlinx.coroutines.runBlocking
 import pokemongame.scene.SCREEN_WIDTH
 import pokemongame.scene.Weather
+import pokemongame.scene.battle.BattleScene
+import pokemongame.scene.battle.BattleSceneState
+import pokemongame.scene.battle.PokemonBattleState
+import pokemongame.scene.battle.Turn
 
 class BattleSceneController(private val battleScene: BattleScene) {
     private val batch: SpriteBatch = SpriteBatch(battleScene.context)
@@ -60,11 +64,7 @@ class BattleSceneController(private val battleScene: BattleScene) {
         animationPlayer.update(dt)
 
         if (battleScene.context.input.isKeyPressed(Key.E) && turnExecutor == null) {
-            turnExecutor = TurnExecutor(Turn.ENEMY, sceneState)
-        }
-
-        if (turnExecutor?.updateTurn(dt) == true) {
-            turnExecutor = null
+            turnExecutor = TurnExecutor(Turn.ENEMY, sceneState, battleScene.injector)
         }
 
         batch.use {
@@ -98,6 +98,10 @@ class BattleSceneController(private val battleScene: BattleScene) {
                 scaleY = 2.75f,
                 flipY = true,
             )
+        }
+
+        if (turnExecutor?.updateTurn(dt) == true) {
+            turnExecutor = null
         }
     }
 
