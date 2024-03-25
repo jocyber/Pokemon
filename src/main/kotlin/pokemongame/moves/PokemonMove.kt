@@ -1,6 +1,6 @@
 package pokemongame.moves
 
-import pokemongame.animations.MoveAnimationPlayer
+import pokemongame.animations.PokemonAnimationPlayer
 import pokemongame.scene.battle.BattleSceneState
 import pokemongame.types.PokemonType
 
@@ -12,5 +12,5 @@ sealed interface PokemonMove {
     val isContactMove: Boolean
     val type: PokemonType
 
-    fun attackAnimation(battleSceneState: BattleSceneState): MoveAnimationPlayer
+    fun attackAnimation(battleSceneState: BattleSceneState): PokemonAnimationPlayer
 }

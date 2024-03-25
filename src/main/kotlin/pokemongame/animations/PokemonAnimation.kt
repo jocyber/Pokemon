@@ -1,8 +1,8 @@
-package pokemongame.animations.movements
+package pokemongame.animations
 
 import kotlin.time.Duration
 
-sealed interface MoveAnimation {
+interface PokemonAnimation {
     fun update(dt: Duration)
 
     fun isDone(): Boolean

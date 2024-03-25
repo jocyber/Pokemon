@@ -1,4 +1,4 @@
-package pokemongame.animations.movements
+package pokemongame.animations.base
 
 import com.lehaine.littlekt.math.Vec2f
 import com.lehaine.littlekt.util.seconds
@@ -22,7 +22,7 @@ class GlideTest {
 
     @Provide
     fun battleStates(): Arbitrary<PokemonBattleState> =
-        points().map { position -> PokemonBattleState(position = position) }
+        points().map { position -> PokemonBattleState(position = position, currentHealth = 1) }
 
     @Property(tries = 1500, seed = "-6218027441402253276")
     fun `actual end position is equal to expected end position`(

@@ -6,7 +6,8 @@ enum class PokemonType {
     FIRE,
     WATER,
     ELECTRIC,
-    NORMAL;
+    NORMAL,
+    FIGHTING;
 
     companion object {
         fun typeEffectiveness(pokemon: Pokemon, attacking: PokemonType): Float {

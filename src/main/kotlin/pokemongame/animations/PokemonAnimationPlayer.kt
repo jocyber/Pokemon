@@ -1,12 +1,11 @@
 package pokemongame.animations
 
 import kotlin.time.Duration
-import pokemongame.animations.movements.MoveAnimation
 
-typealias MoveUpdates = Array<Array<MoveAnimation>>
+private typealias MoveUpdates = Array<Array<PokemonAnimation>>
 
 /** Class for playing an animation that involves movement. */
-class MoveAnimationPlayer(private val moveUpdates: MoveUpdates) {
+class PokemonAnimationPlayer(private val moveUpdates: MoveUpdates) {
     private var index = 0
 
     /**

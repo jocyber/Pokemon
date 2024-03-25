@@ -9,74 +9,56 @@ import com.lehaine.littlekt.util.seconds
 import kotlin.math.abs
 import kotlin.math.round
 import kotlin.time.Duration
+import org.koin.core.qualifier.named
+import org.koin.java.KoinJavaComponent.inject
+import pokemongame.animations.PokemonAnimation
+import pokemongame.koin.HEALTH_BAR_TEXTURE
+import pokemongame.scene.battle.BattleEntity
 
 class HealthBar(
-    currentHealth: Int,
-    isPlayer: Boolean,
-    private val totalHealth: Int,
-    texture: Texture,
+    var currentHealth: Int,
+    val battleEntity: BattleEntity,
+    val totalHealth: Int,
 ) {
-    private var animation: Animation<TextureSlice>
-    private var currentFrame: Int
-
-    private val slices: List<TextureSlice> =
-        if (isPlayer) {
-            (0 ..< FRAMES.toInt()).map {
-                TextureSlice(
-                    texture,
-                    x = WIDTH_PLAYER * it,
-                    y = HEIGHT_ENEMY,
-                    width = WIDTH_PLAYER,
-                    height = HEIGHT_PLAYER
-                )
-            }
-        } else {
-            texture.slice(WIDTH_ENEMY, HEIGHT_ENEMY).flatten().toList()
-        }
-
     val animationPlayer = AnimationPlayer<TextureSlice>()
+    var currentFrame = currentFrameFromPercent(currentHealth, totalHealth)
+        private set
+
+    private var animation = getAnimation(listOf(currentFrame), battleEntity)
 
     init {
-        currentFrame = currentFrameFromPercent(currentHealth, totalHealth)
-        animation =
-            Animation(
-                frames = slices,
-                frameIndices = listOf(currentFrame),
-                frameTimes = (0..currentFrame).map { SWITCH_TIME.seconds },
-            )
-
         animationPlayer.play(animation)
     }
 
-    fun updateHealth(updatedHealth: Int): (dt: Duration) -> Boolean {
+    fun updateHealth(updatedHealth: Int): PokemonAnimation {
         val lastFrame = currentFrame
         currentFrame = currentFrameFromPercent(updatedHealth, totalHealth)
 
-        val updates = abs(lastFrame - currentFrame)
-        val framesIndices = (lastFrame downTo currentFrame).toList()
+        val frameIndices =
+            (if (currentFrame < lastFrame) (lastFrame downTo currentFrame)
+                else (lastFrame..currentFrame))
+                .toList()
 
-        animation =
-            Animation(
-                frames = slices,
-                frameIndices = framesIndices,
-                frameTimes = framesIndices.map { SWITCH_TIME.seconds },
-            )
-
+        animation = getAnimation(frameIndices, battleEntity)
         animationPlayer.play(animation)
 
-        return { dt ->
-            animationPlayer.update(dt)
-            animationPlayer.totalFramesPlayed == updates
+        return object : PokemonAnimation {
+            override fun update(dt: Duration) = animationPlayer.update(dt)
+
+            override fun isDone() =
+                animationPlayer.totalFramesPlayed == abs(lastFrame - currentFrame)
         }
     }
 
     private fun currentFrameFromPercent(updatedHealth: Int, maxHealth: Int): Int {
         val healthPercent = updatedHealth.toFloat() / maxHealth.toFloat()
-        return round(FRAMES * healthPercent).toInt()
+        val roundedFrame = round(MAX_FRAME_INDEX * healthPercent).toInt()
+
+        return if (updatedHealth > 0 && roundedFrame == 0) 1 else roundedFrame
     }
 
     private companion object {
-        const val FRAMES = 48f
+        const val MAX_FRAME_INDEX = 48f
         const val SWITCH_TIME = 0.03f
 
         const val WIDTH_PLAYER = 128
@@ -84,5 +66,33 @@ class HealthBar(
 
         const val WIDTH_ENEMY = 122
         const val HEIGHT_ENEMY = 35
+
+        val FRAME_RANGE = (0..MAX_FRAME_INDEX.toInt())
+        val FRAME_TIMES = FRAME_RANGE.map { SWITCH_TIME.seconds }
+
+        private val TEXTURE: Texture by
+            inject(Texture::class.java, qualifier = named(HEALTH_BAR_TEXTURE))
+
+        private val SLICES_BY_ENTITY =
+            mapOf(
+                BattleEntity.PLAYER to
+                    FRAME_RANGE.map {
+                        TextureSlice(
+                            TEXTURE,
+                            x = WIDTH_PLAYER * it,
+                            y = HEIGHT_ENEMY,
+                            width = WIDTH_PLAYER,
+                            height = HEIGHT_PLAYER
+                        )
+                    },
+                BattleEntity.ENEMY to TEXTURE.slice(WIDTH_ENEMY, HEIGHT_ENEMY).flatten().toList()
+            )
+
+        fun getAnimation(indices: List<Int>, battleEntity: BattleEntity) =
+            Animation(
+                frames = SLICES_BY_ENTITY[battleEntity]!!,
+                frameIndices = indices,
+                frameTimes = FRAME_TIMES,
+            )
     }
 }

@@ -1,22 +1,19 @@
 package pokemongame.scene.battle.control
 
+import com.lehaine.littlekt.graphics.Color
 import com.lehaine.littlekt.graphics.g2d.Animation
 import com.lehaine.littlekt.graphics.g2d.AnimationPlayer
 import com.lehaine.littlekt.graphics.g2d.SpriteBatch
 import com.lehaine.littlekt.graphics.g2d.TextureSlice
 import com.lehaine.littlekt.graphics.g2d.use
 import com.lehaine.littlekt.graphics.slice
+import com.lehaine.littlekt.graphics.toFloatBits
 import com.lehaine.littlekt.input.Key
-import com.lehaine.littlekt.math.Vec2f
 import com.lehaine.littlekt.util.milliseconds
 import kotlin.time.Duration
-import kotlinx.coroutines.runBlocking
 import pokemongame.scene.SCREEN_WIDTH
-import pokemongame.scene.Weather
+import pokemongame.scene.battle.BattleEntity
 import pokemongame.scene.battle.BattleScene
-import pokemongame.scene.battle.BattleSceneState
-import pokemongame.scene.battle.PokemonBattleState
-import pokemongame.scene.battle.Turn
 
 class BattleSceneController(private val battleScene: BattleScene) {
     private val batch: SpriteBatch = SpriteBatch(battleScene.context)
@@ -24,47 +21,65 @@ class BattleSceneController(private val battleScene: BattleScene) {
     // have a move selector and bag handler
     private var turnExecutor: TurnExecutor? = null
 
-    private val animationPlayer: AnimationPlayer<TextureSlice>
+    private val enemyAnimationPlayer: AnimationPlayer<TextureSlice>
+    private val playerAnimationPlayer: AnimationPlayer<TextureSlice>
+
     private val enemyAnimation: Animation<TextureSlice>
+    private val playerAnimation: Animation<TextureSlice>
 
     // migrate move animation execution to the turn executor
-    private val sceneState =
-        BattleSceneState(
-            playerState = PokemonBattleState(position = ENEMY_POS),
-            enemyState = PokemonBattleState(position = ENEMY_POS),
-            weather = Weather.SUN,
-        )
-
     init {
         val enemyPokemon = battleScene.enemyPokemon
+        val playerPokemon = battleScene.playerPokemon
 
-        // standing animations to battle scene
+        // move standing animations to BattleSceneDrawer
 
-        val enemySlices = runBlocking {
-            enemyPokemon.pokemon
-                .getTexture(battleScene.context)
+        val enemySlices =
+            battleScene.enemyPokemonTexture
                 .slice(
-                    sliceWidth = enemyPokemon.pokemon.textureWidth,
-                    sliceHeight = enemyPokemon.pokemon.textureHeight
+                    sliceWidth = enemyPokemon.pokemon.frontTextureWidth,
+                    sliceHeight = enemyPokemon.pokemon.frontTextureHeight
                 )
                 .flatten()
-        }
-        this.animationPlayer = AnimationPlayer()
+
+        // move slicing strategy to pokemon with default implementation
+        val playerSlices =
+            (0..playerPokemon.pokemon.backFrames).map {
+                TextureSlice(
+                    battleScene.playerPokemonTexture,
+                    x = playerPokemon.pokemon.backTextureWidth * it + 1,
+                    y = 0,
+                    width = playerPokemon.pokemon.backTextureWidth,
+                    height = playerPokemon.pokemon.backTextureHeight,
+                )
+            }
+        battleScene.playerPokemonTexture
+
+        this.enemyAnimationPlayer = AnimationPlayer()
         this.enemyAnimation =
             Animation(
                 frames = enemySlices,
                 frameIndices = enemySlices.indices.toList(),
                 frameTimes = enemySlices.map { IDLE.milliseconds }
             )
+        enemyAnimationPlayer.playLooped(enemyAnimation)
 
-        animationPlayer.playLooped(enemyAnimation)
+        this.playerAnimationPlayer = AnimationPlayer()
+        this.playerAnimation =
+            Animation(
+                frames = playerSlices,
+                frameIndices = playerSlices.indices.toList(),
+                frameTimes = playerSlices.map { IDLE.milliseconds }
+            )
+        playerAnimationPlayer.playLooped(playerAnimation)
     }
 
     fun controlLogic(dt: Duration) {
-        animationPlayer.update(dt)
+        enemyAnimationPlayer.update(dt)
+        playerAnimationPlayer.update(dt)
 
         if (battleScene.context.input.isKeyPressed(Key.E) && turnExecutor == null) {
-            turnExecutor = TurnExecutor(Turn.ENEMY, sceneState, battleScene.injector)
+            turnExecutor = TurnExecutor(BattleEntity.ENEMY, battleScene)
         }
 
         batch.use {
@@ -78,11 +93,11 @@ class BattleSceneController(private val battleScene: BattleScene) {
             )
         }
 
-        drawEnemy(dt)
+        drawPokemon(dt)
 
         batch.use {
             it.draw(
-                battleScene.playerHealthBar?.animationPlayer!!.currentKeyFrame!!,
+                battleScene.playerHealthBar.animationPlayer.currentKeyFrame!!,
                 x = 576f,
                 y = -120f,
                 scaleX = 3f,
@@ -91,7 +106,7 @@ class BattleSceneController(private val battleScene: BattleScene) {
             )
 
             it.draw(
-                battleScene.enemyHealthBar?.animationPlayer!!.currentKeyFrame!!,
+                battleScene.enemyHealthBar.animationPlayer.currentKeyFrame!!,
                 x = 0f,
                 y = 140f,
                 scaleX = 3f,
@@ -103,33 +118,56 @@ class BattleSceneController(private val battleScene: BattleScene) {
         if (turnExecutor?.updateTurn(dt) == true) {
             turnExecutor = null
         }
+
+        batch.use {
+            it.draw(
+                battleScene.moveSelectBackground,
+                x = 0f,
+                y = -287f,
+                width = SCREEN_WIDTH,
+                scaleY = 2.978f,
+                flipY = true,
+            )
+        }
     }
 
-    private fun drawEnemy(dt: Duration) {
+    private fun drawPokemon(dt: Duration) {
         batch.use {
-            // draw the shadow
+            // draw the enemies shadow
             it.draw(
-                animationPlayer.currentKeyFrame!!,
-                x = sceneState.enemyState.position.x - 10,
-                y = sceneState.enemyState.position.y + 10,
+                enemyAnimationPlayer.currentKeyFrame!!,
+                x = battleScene.sceneState.enemyState.position.x - 10,
+                y = battleScene.sceneState.enemyState.position.y + 10,
                 flipY = true,
                 scaleX = 3f,
-                colorBits = 210f
+                colorBits = SHADOW_COLOR,
             )
 
             it.draw(
-                animationPlayer.currentKeyFrame!!,
-                x = sceneState.enemyState.position.x,
-                y = sceneState.enemyState.position.y,
+                enemyAnimationPlayer.currentKeyFrame!!,
+                x = battleScene.sceneState.enemyState.position.x,
+                y = battleScene.sceneState.enemyState.position.y,
                 flipY = true,
                 scaleX = 3f,
                 scaleY = 3f,
+                colorBits = battleScene.sceneState.enemyState.colorBits
+            )
+
+            it.draw(
+                playerAnimationPlayer.currentKeyFrame!!,
+                x = battleScene.sceneState.playerState.position.x,
+                y = battleScene.sceneState.playerState.position.y,
+                flipY = true,
+                scaleX = 4f,
+                scaleY = 4f,
+                colorBits = battleScene.sceneState.playerState.colorBits
             )
         }
     }
 
     private companion object {
         const val IDLE = 3500f / 60f
-        val ENEMY_POS = Vec2f(650f, 30f)
+
+        val SHADOW_COLOR = Color.DARK_GRAY.withAlpha(0.4f).toFloatBits()
     }
 }

@@ -1,12 +1,11 @@
 package pokemongame.scene.battle.control
 
-import com.google.inject.Injector
 import kotlin.time.Duration
-import pokemongame.animations.MoveAnimationPlayer
+import pokemongame.animations.PokemonAnimationPlayer
 import pokemongame.moves.Tackle
-import pokemongame.scene.battle.BattleSceneState
+import pokemongame.scene.battle.BattleEntity
+import pokemongame.scene.battle.BattleScene
 import pokemongame.scene.battle.PokemonBattleState
-import pokemongame.scene.battle.Turn
 
 /**
  * A helper class for executing the attacking phase of a battle. It takes in details of the moves
@@ -15,24 +14,26 @@ import pokemongame.scene.battle.Turn
  * Pokemon.
  */
 class TurnExecutor(
-    private var turn: Turn,
-    private val battleState: BattleSceneState,
-    private val injector: Injector,
+    private var turn: BattleEntity,
+    private val battleScene: BattleScene,
 ) {
     private enum class State {
         PREPARING_TO_ATTACK,
         ATTACKING,
         ENDING_TURN,
+        UPDATING_HEALTH,
         ENDING_ROUND,
     }
 
-    private var moveAnimationPlayer: MoveAnimationPlayer? = null
+    private var pokemonAnimationPlayer: PokemonAnimationPlayer? = null
     private var currentState: State = State.PREPARING_TO_ATTACK
+    private var healthUpdater: PokemonAnimationPlayer? = null
 
     fun updateTurn(dt: Duration): Boolean {
         return when (currentState) {
             State.PREPARING_TO_ATTACK -> preparingToAttack()
             State.ATTACKING -> attacking(dt)
+            State.UPDATING_HEALTH -> updatingHealth(dt)
             State.ENDING_TURN -> endingTurn()
             State.ENDING_ROUND -> endingRound()
         }
@@ -56,10 +57,10 @@ class TurnExecutor(
         val doesHit = true
 
         if (doesHit) {
-            val moveAnimation = injector.getInstance(Tackle::class.java)
+            val moveAnimation = Tackle
 
             // take into account multi-hit moves and multi-turn moves
-            moveAnimationPlayer = moveAnimation.attackAnimation(battleState)
+            pokemonAnimationPlayer = moveAnimation.attackAnimation(battleScene.sceneState)
             currentState = State.ATTACKING
         } else {
             println("But it missed")
@@ -71,13 +72,33 @@ class TurnExecutor(
     }
 
     private fun attacking(dt: Duration): Boolean {
-        if (moveAnimationPlayer?.playAnimation(dt) == false) {
+        if (pokemonAnimationPlayer?.playAnimation(dt) == false) {
             return false
         }
 
+        currentState = State.UPDATING_HEALTH
+        healthUpdater =
+            PokemonAnimationPlayer(
+                arrayOf(
+                    arrayOf(
+                        battleScene.playerHealthBar.updateHealth(
+                            battleScene.sceneState.playerState.currentHealth
+                        )
+                    )
+                )
+            )
         // check for recoil
 
         // if fainted, set state to fainting
+        // currentState = State.ENDING_TURN
+        return false
+    }
+
+    private fun updatingHealth(dt: Duration): Boolean {
+        if (healthUpdater?.playAnimation(dt) == false) {
+            return false
+        }
+
         return false
     }
 
@@ -85,14 +106,14 @@ class TurnExecutor(
         val (target, opposing) = getTargetsFromTurn(turn)
 
         if (target.turnPassed && opposing.turnPassed) {
-            battleState.enemyState.turnPassed = false
-            battleState.playerState.turnPassed = false
+            battleScene.sceneState.enemyState.turnPassed = false
+            battleScene.sceneState.playerState.turnPassed = false
 
             currentState = State.ENDING_ROUND
             return true
         }
 
-        turn = if (turn == Turn.PLAYER) Turn.ENEMY else Turn.PLAYER
+        turn = if (turn == BattleEntity.PLAYER) BattleEntity.ENEMY else BattleEntity.PLAYER
         currentState = State.PREPARING_TO_ATTACK
 
         return false
@@ -103,8 +124,11 @@ class TurnExecutor(
         return true
     }
 
-    private fun getTargetsFromTurn(turn: Turn): Pair<PokemonBattleState, PokemonBattleState> {
-        return if (turn == Turn.PLAYER) Pair(battleState.playerState, battleState.enemyState)
-        else Pair(battleState.enemyState, battleState.playerState)
+    private fun getTargetsFromTurn(
+        turn: BattleEntity
+    ): Pair<PokemonBattleState, PokemonBattleState> {
+        return if (turn == BattleEntity.PLAYER)
+            Pair(battleScene.sceneState.playerState, battleScene.sceneState.enemyState)
+        else Pair(battleScene.sceneState.enemyState, battleScene.sceneState.playerState)
     }
 }

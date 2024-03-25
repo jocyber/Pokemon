@@ -1,6 +1,6 @@
 package pokemongame.scene.battle
 
-enum class Turn {
+enum class BattleEntity {
     PLAYER,
     ENEMY
 }

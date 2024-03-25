@@ -1,19 +1,18 @@
 package pokemongame.pokemon
 
-import com.lehaine.littlekt.Context
-import com.lehaine.littlekt.graphics.Texture
-import kotlin.reflect.KClass
 import pokemongame.moves.PokemonMove
 import pokemongame.types.PokemonType
 
 sealed interface Pokemon {
-    val textureWidth: Int
-    val textureHeight: Int
-    val frames: Int
+    val frontTextureWidth: Int
+    val frontTextureHeight: Int
+    val frontFrames: Int
+
+    val backTextureWidth: Int
+    val backTextureHeight: Int
+    val backFrames: Int
 
     // based on generation 5 move sets
-    val movesByLevel: Map<Int, KClass<out PokemonMove>>
+    val movesByLevel: Map<Int, PokemonMove>
     val type: Pair<PokemonType, PokemonType?>
-
-    suspend fun getTexture(context: Context): Texture
 }

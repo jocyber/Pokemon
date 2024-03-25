@@ -1,8 +1,9 @@
-package pokemongame.animations.movements
+package pokemongame.animations.base
 
 import com.lehaine.littlekt.math.Vec2f
 import com.lehaine.littlekt.util.seconds
 import kotlin.time.Duration
+import pokemongame.animations.PokemonAnimation
 import pokemongame.scene.battle.PokemonBattleState
 
 /** A utility class for gliding a Pokemon during a battle scene. */
@@ -12,7 +13,7 @@ class Glide(
     seconds: Float,
     // TODO: Change this to a positionable super type
     private val pokemonBattleState: PokemonBattleState,
-) : MoveAnimation {
+) : PokemonAnimation {
     private val deltaX: Float
     private val deltaY: Float
     private val currentPoint = startingPoint.toMutableVec2()
@@ -21,7 +22,7 @@ class Glide(
     private var distanceTraveled = 0f
 
     init {
-        if (seconds == 0f) {
+        if (seconds <= 0f) {
             throw IllegalArgumentException("Seconds for a glide animation cannot be zero")
         }
 
