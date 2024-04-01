@@ -3,9 +3,11 @@ package pokemongame.scene.battle
 import com.lehaine.littlekt.graphics.Color
 import com.lehaine.littlekt.graphics.toFloatBits
 import com.lehaine.littlekt.math.Vec2f
+import pokemongame.scene.battle.ui.HealthBar
 
 data class PokemonBattleState(
     val stats: BattleStats = BattleStats(),
+    var healthBar: HealthBar? = null,
     var position: Vec2f,
     var currentHealth: Int,
     var colorBits: Float = Color.WHITE.toFloatBits(),

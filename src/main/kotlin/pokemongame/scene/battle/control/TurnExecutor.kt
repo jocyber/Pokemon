@@ -5,7 +5,6 @@ import pokemongame.animations.PokemonAnimationPlayer
 import pokemongame.moves.Tackle
 import pokemongame.scene.battle.BattleEntity
 import pokemongame.scene.battle.BattleScene
-import pokemongame.scene.battle.PokemonBattleState
 
 /**
  * A helper class for executing the attacking phase of a battle. It takes in details of the moves
@@ -13,44 +12,50 @@ import pokemongame.scene.battle.PokemonBattleState
  * will handle most of the logic associated with all the variables that goes into attacking a
  * Pokemon.
  */
-class TurnExecutor(
-    private var turn: BattleEntity,
-    private val battleScene: BattleScene,
-) {
+class TurnExecutor(private val battleScene: BattleScene) {
     private enum class State {
         PREPARING_TO_ATTACK,
         ATTACKING,
         ENDING_TURN,
-        UPDATING_HEALTH,
         ENDING_ROUND,
     }
 
     private var pokemonAnimationPlayer: PokemonAnimationPlayer? = null
-    private var currentState: State = State.PREPARING_TO_ATTACK
-    private var healthUpdater: PokemonAnimationPlayer? = null
+    private var currentState = State.PREPARING_TO_ATTACK
+    private var turn = BattleEntity.ENEMY
 
-    fun updateTurn(dt: Duration): Boolean {
-        return when (currentState) {
-            State.PREPARING_TO_ATTACK -> preparingToAttack()
-            State.ATTACKING -> attacking(dt)
-            State.UPDATING_HEALTH -> updatingHealth(dt)
-            State.ENDING_TURN -> endingTurn()
-            State.ENDING_ROUND -> endingRound()
+    init {
+        val (target, opposing) = getTargetsFromTurn(turn)
+
+        battleScene.sceneState.apply {
+            currentTarget = target
+            opposingTarget = opposing
+            turn = this@TurnExecutor.turn
         }
     }
 
+    fun updateTurn(dt: Duration): Boolean {
+        when (currentState) {
+            State.PREPARING_TO_ATTACK -> return preparingToAttack()
+            State.ATTACKING -> attacking(dt)
+            State.ENDING_TURN -> return endingTurn()
+            State.ENDING_ROUND -> return endingRound()
+        }
+
+        return false
+    }
+
     private fun preparingToAttack(): Boolean {
-        // check for status like sleep and paralysis
-        val (target, opposing) = getTargetsFromTurn(turn)
+        // TODO: check for status like sleep and paralysis
+        with (battleScene.sceneState) {
+            if (opposingTarget.isFainted || opposingTarget.isInvulnerable) {
+                // if flinched, display "but it flinched"
+                // else display "but it missed"
+                println("But it missed")
+                currentState = State.ENDING_TURN
 
-        if (opposing.isFainted || opposing.isInvulnerable) {
-            // if flinched, display "but it flinched"
-            // else display "but it missed"
-            println("But it missed")
-            target.turnPassed = true
-            currentState = State.ENDING_TURN
-
-            return false
+                return@preparingToAttack false
+            }
         }
 
         // check if it hits
@@ -59,63 +64,50 @@ class TurnExecutor(
         if (doesHit) {
             val moveAnimation = Tackle
 
-            // take into account multi-hit moves and multi-turn moves
+            // TODO: take into account multi-hit moves and multi-turn moves
             pokemonAnimationPlayer = moveAnimation.attackAnimation(battleScene.sceneState)
             currentState = State.ATTACKING
         } else {
             println("But it missed")
             currentState = State.ENDING_TURN
-            target.turnPassed = true
         }
 
         return false
     }
 
-    private fun attacking(dt: Duration): Boolean {
+    private fun attacking(dt: Duration) {
         if (pokemonAnimationPlayer?.playAnimation(dt) == false) {
-            return false
+            return
         }
 
-        currentState = State.UPDATING_HEALTH
-        healthUpdater =
-            PokemonAnimationPlayer(
-                arrayOf(
-                    arrayOf(
-                        battleScene.playerHealthBar.updateHealth(
-                            battleScene.sceneState.playerState.currentHealth
-                        )
-                    )
-                )
-            )
+        currentState = State.ENDING_TURN
         // check for recoil
-
         // if fainted, set state to fainting
-        // currentState = State.ENDING_TURN
-        return false
-    }
-
-    private fun updatingHealth(dt: Duration): Boolean {
-        if (healthUpdater?.playAnimation(dt) == false) {
-            return false
-        }
-
-        return false
     }
 
     private fun endingTurn(): Boolean {
         val (target, opposing) = getTargetsFromTurn(turn)
 
-        if (target.turnPassed && opposing.turnPassed) {
-            battleScene.sceneState.enemyState.turnPassed = false
-            battleScene.sceneState.playerState.turnPassed = false
+        target.turnPassed = true
+        turn = if (turn == BattleEntity.PLAYER) BattleEntity.ENEMY else BattleEntity.PLAYER
 
-            currentState = State.ENDING_ROUND
-            return true
+        battleScene.sceneState.apply {
+            currentTarget = opposing
+            opposingTarget = target
+            turn = this@TurnExecutor.turn
         }
 
-        turn = if (turn == BattleEntity.PLAYER) BattleEntity.ENEMY else BattleEntity.PLAYER
-        currentState = State.PREPARING_TO_ATTACK
+        if (target.turnPassed && opposing.turnPassed) {
+            battleScene.sceneState.apply {
+                enemyState.turnPassed = false
+                playerState.turnPassed = false
+            }
 
+            currentState = State.ENDING_ROUND
+            return false
+        }
+
+        currentState = State.PREPARING_TO_ATTACK
         return false
     }
 
@@ -124,11 +116,9 @@ class TurnExecutor(
         return true
     }
 
-    private fun getTargetsFromTurn(
-        turn: BattleEntity
-    ): Pair<PokemonBattleState, PokemonBattleState> {
-        return if (turn == BattleEntity.PLAYER)
-            Pair(battleScene.sceneState.playerState, battleScene.sceneState.enemyState)
-        else Pair(battleScene.sceneState.enemyState, battleScene.sceneState.playerState)
-    }
+    private fun getTargetsFromTurn(turn: BattleEntity) =
+        with(battleScene.sceneState) {
+            if (turn == BattleEntity.PLAYER) Pair(playerState, enemyState)
+            else Pair(enemyState, playerState)
+        }
 }

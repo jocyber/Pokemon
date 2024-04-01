@@ -7,7 +7,6 @@ import com.lehaine.littlekt.file.vfs.readTexture
 import com.lehaine.littlekt.graphics.gl.ClearBufferMask
 import org.koin.core.context.startKoin
 import pokemongame.koin.animationTexturesModule
-import pokemongame.koin.animationsModule
 import pokemongame.koin.audioClipsModule
 import pokemongame.koin.audioStreamsModule
 import pokemongame.koin.battleSceneModule
@@ -46,7 +45,6 @@ class GameCore(context: Context) : ContextListener(context) {
                 audioStreamsModule(context),
                 audioClipsModule(context),
                 animationTexturesModule(context),
-                animationsModule(context),
             )
         }
 

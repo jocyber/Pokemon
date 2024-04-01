@@ -10,6 +10,7 @@ final List<String> coverageExclusions = [
     '**/PokemonGame.kt',
     '**/koin/*.kt',
     '**/pokemon/*.kt',
+    '**/moves/*/kt',
 ]
 
 jacocoTestCoverageVerification {

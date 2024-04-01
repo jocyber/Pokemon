@@ -16,7 +16,7 @@ import pokemongame.koin.HEALTH_BAR_TEXTURE
 import pokemongame.scene.battle.BattleEntity
 
 class HealthBar(
-    var currentHealth: Int,
+    currentHealth: Int,
     val battleEntity: BattleEntity,
     val totalHealth: Int,
 ) {

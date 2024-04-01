@@ -7,7 +7,6 @@ import org.koin.core.qualifier.named
 import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.inject
 import pokemongame.koin.BATTLE_UI_BACKGROUND
-import pokemongame.koin.HEALTH_BAR_TEXTURE
 import pokemongame.pokemon.state.PokemonModel
 import pokemongame.scene.Weather
 import pokemongame.scene.battle.ui.HealthBar
@@ -22,20 +21,11 @@ class BattleScene(
     // inject battleUIHandler
     val moveSelectBackground: Texture by inject(Texture::class.java, named(BATTLE_UI_BACKGROUND))
 
-    lateinit var enemyHealthBar: HealthBar
-        private set
-
-    lateinit var playerHealthBar: HealthBar
-        private set
-
     lateinit var enemyPokemonTexture: Texture
         private set
 
     lateinit var playerPokemonTexture: Texture
         private set
-
-    private val texture: Texture by
-        inject(Texture::class.java, qualifier = named(HEALTH_BAR_TEXTURE))
 
     val sceneState =
         BattleSceneState(
@@ -49,8 +39,13 @@ class BattleScene(
                     position = ENEMY_POS,
                     currentHealth = enemyPokemon.currentHealth,
                 ),
-            weather,
+            weather = weather,
+            turn = BattleEntity.PLAYER,
         )
+        .apply {
+            currentTarget = playerState
+            opposingTarget = enemyState
+        }
 
     init {
         setEnemyPokemon(enemyPokemon)
@@ -58,7 +53,7 @@ class BattleScene(
     }
 
     fun setEnemyPokemon(pokemonModel: PokemonModel) {
-        enemyHealthBar =
+        sceneState.enemyState.healthBar =
             HealthBar(
                 currentHealth = enemyPokemon.currentHealth,
                 totalHealth = enemyPokemon.currentHealth,
@@ -69,7 +64,7 @@ class BattleScene(
     }
 
     fun setPlayerPokemon(pokemonModel: PokemonModel) {
-        playerHealthBar =
+        sceneState.playerState.healthBar =
             HealthBar(
                 currentHealth = playerPokemon.currentHealth,
                 totalHealth = playerPokemon.currentHealth,
@@ -88,7 +83,11 @@ class BattleScene(
 data class BattleSceneState(
     var playerState: PokemonBattleState,
     var enemyState: PokemonBattleState,
+    var turn: BattleEntity,
     var weather: Weather,
     var isSpecialScreenActive: Boolean = false,
     var isPhysicalScreenActive: Boolean = false,
-)
+) {
+    lateinit var currentTarget: PokemonBattleState
+    lateinit var opposingTarget: PokemonBattleState
+}

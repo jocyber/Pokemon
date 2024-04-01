@@ -6,9 +6,6 @@ import kotlinx.coroutines.runBlocking
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-const val PRIMEAPE = "Primeape"
-const val ZIGZAGOON = "Zigzagoon"
-
 /**
  * A module for injecting Pokemon textures. Note, the named injection must be the same name as the
  * data object of the corresponding Pokemon.
@@ -24,3 +21,6 @@ fun pokemonTexturesModule(context: Context) = module {
         }
     }
 }
+
+const val PRIMEAPE = "Primeape"
+const val ZIGZAGOON = "Zigzagoon"

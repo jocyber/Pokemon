@@ -6,10 +6,10 @@ import kotlinx.coroutines.runBlocking
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-const val HIT_EFFECT = "HitEffect"
-
 fun animationTexturesModule(context: Context) = module {
     single(named(HIT_EFFECT)) {
         runBlocking { context.resourcesVfs["assets/sprites/moves/tackle_effect.png"].readTexture() }
     }
 }
+
+const val HIT_EFFECT = "HitEffect"

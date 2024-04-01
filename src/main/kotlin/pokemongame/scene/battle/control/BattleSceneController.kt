@@ -79,7 +79,7 @@ class BattleSceneController(private val battleScene: BattleScene) {
         playerAnimationPlayer.update(dt)
 
         if (battleScene.context.input.isKeyPressed(Key.E) && turnExecutor == null) {
-            turnExecutor = TurnExecutor(BattleEntity.ENEMY, battleScene)
+            turnExecutor = TurnExecutor(battleScene)
         }
 
         batch.use {
@@ -97,7 +97,7 @@ class BattleSceneController(private val battleScene: BattleScene) {
 
         batch.use {
             it.draw(
-                battleScene.playerHealthBar.animationPlayer.currentKeyFrame!!,
+                battleScene.sceneState.playerState.healthBar?.animationPlayer?.currentKeyFrame!!,
                 x = 576f,
                 y = -120f,
                 scaleX = 3f,
@@ -106,7 +106,7 @@ class BattleSceneController(private val battleScene: BattleScene) {
             )
 
             it.draw(
-                battleScene.enemyHealthBar.animationPlayer.currentKeyFrame!!,
+                battleScene.sceneState.enemyState.healthBar?.animationPlayer?.currentKeyFrame!!,
                 x = 0f,
                 y = 140f,
                 scaleX = 3f,
@@ -115,9 +115,10 @@ class BattleSceneController(private val battleScene: BattleScene) {
             )
         }
 
-        if (turnExecutor?.updateTurn(dt) == true) {
-            turnExecutor = null
-        }
+        turnExecutor?.updateTurn(dt)
+//        if (turnExecutor?.updateTurn(dt) == true) {
+//            turnExecutor = null
+//        }
 
         batch.use {
             it.draw(

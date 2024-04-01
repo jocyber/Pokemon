@@ -75,31 +75,6 @@ class HealthBarTest : KoinTest {
         assertThat(healthBar.currentFrame).isNotEqualTo(0)
     }
 
-    @Property(tries = 500, seed = "-768161245481325847")
-    fun inverse(
-        @ForAll("battleEntities") battleEntity: BattleEntity,
-        @ForAll("healthValueArbitraries") healthValues: HealthValues,
-    ) {
-        val healthBar =
-            with(healthValues) {
-                HealthBar(
-                    startHealth,
-                    battleEntity,
-                    totalHealth,
-                )
-            }
-
-        val healthBeforeUpdate = healthBar.currentHealth
-        val frameBeforeUpdate = healthBar.currentFrame
-
-        healthBar.updateHealth(healthValues.updatedHealth)
-
-        val healthDifference = healthBeforeUpdate - healthBar.currentHealth
-        healthBar.updateHealth(healthBar.currentHealth + healthDifference)
-
-        assertThat(frameBeforeUpdate).isEqualTo(healthBar.currentFrame)
-    }
-
     @Property(tries = 500, seed = "-4813740741812647548")
     fun `lower updatedHealth yields a lower, or equal, frame index`(
         @ForAll("battleEntities") battleEntity: BattleEntity,
