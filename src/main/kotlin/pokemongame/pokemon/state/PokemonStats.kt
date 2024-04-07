@@ -10,5 +10,6 @@ class PokemonStats(
     // ivs
     // evs
     // actualStats
+    var totalHealth: Int,
     val pokemon: Pokemon,
 )

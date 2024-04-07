@@ -21,6 +21,7 @@ class BattleScene(
     // inject battleUIHandler
     val moveSelectBackground: Texture by inject(Texture::class.java, named(BATTLE_UI_BACKGROUND))
 
+    // use delegation here?
     lateinit var enemyPokemonTexture: Texture
         private set
 
@@ -56,7 +57,7 @@ class BattleScene(
         sceneState.enemyState.healthBar =
             HealthBar(
                 currentHealth = enemyStats.currentHealth,
-                totalHealth = enemyStats.currentHealth,
+                totalHealth = enemyStats.totalHealth,
                 battleEntity = BattleEntity.ENEMY,
             )
 
@@ -67,7 +68,7 @@ class BattleScene(
         sceneState.playerState.healthBar =
             HealthBar(
                 currentHealth = playerStats.currentHealth,
-                totalHealth = playerStats.currentHealth,
+                totalHealth = playerStats.totalHealth,
                 battleEntity = BattleEntity.PLAYER,
             )
 

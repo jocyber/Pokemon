@@ -58,6 +58,7 @@ data object Tackle : PokemonMove {
             val glideForward = Glide(startingPoint, endingPoint, seconds = TIME, currentTarget)
             val glideBack = Glide(endingPoint, startingPoint, seconds = TIME, currentTarget)
 
+            opposingTarget.wasHit = true
             animationPlayer.play(sparksAnimation)
 
             val sparksPosition =

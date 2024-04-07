@@ -31,7 +31,8 @@ class GlideTest {
         points().map { position ->
             PokemonBattleState(
                 position = position,
-                stats = PokemonStats(level = 1, currentHealth = 1, pokemon = Primeape)
+                stats =
+                    PokemonStats(level = 1, currentHealth = 1, pokemon = Primeape, totalHealth = 1)
             )
         }
 

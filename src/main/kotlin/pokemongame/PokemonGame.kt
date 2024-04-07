@@ -39,12 +39,19 @@ class GameCore(context: Context) : ContextListener(context) {
                 context,
                 backgroundTexture =
                     resourcesVfs["assets/backgrounds/grass_background.png"].readTexture(),
-                enemyStats = PokemonStats(level = 10, currentHealth = 1, pokemon = Zigzagoon),
+                enemyStats =
+                    PokemonStats(
+                        level = 10,
+                        currentHealth = 1,
+                        pokemon = Zigzagoon,
+                        totalHealth = 10,
+                    ),
                 playerStats =
                     PokemonStats(
                         level = 10,
                         currentHealth = 1,
                         pokemon = Primeape,
+                        totalHealth = 50,
                     ),
                 weather = Weather.SUN,
             )

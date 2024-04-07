@@ -10,7 +10,6 @@ import pokemongame.scene.battle.ui.HealthBar
 data class PokemonBattleState(
     val stats: PokemonStats,
     val battleStats: BattleStats = BattleStats(),
-    var healthBar: HealthBar? = null,
     var position: Vec2f,
     var colorBits: Float = Color.WHITE.toFloatBits(),
     var isAttacking: Boolean = false,
@@ -20,7 +19,9 @@ data class PokemonBattleState(
     var turnPassed: Boolean = false,
     var isFainted: Boolean = false,
     var isBurned: Boolean = false,
-)
+) {
+    lateinit var healthBar: HealthBar
+}
 
 data class BattleStats(
     var attack: Int = 0,

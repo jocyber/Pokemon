@@ -82,7 +82,8 @@ class TurnExecutor(private val battleScene: BattleScene) {
             return
         }
 
-        damageExecutor = DamageExecutor(battleScene.sceneState)
+        damageExecutor =
+            DamageExecutor(battleScene.sceneState, target = battleScene.sceneState.opposingTarget)
         currentState = State.TAKING_DAMAGE
         // check for recoil
         // if fainted, set state to fainting
