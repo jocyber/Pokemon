@@ -5,12 +5,7 @@ import com.lehaine.littlekt.ContextListener
 import com.lehaine.littlekt.createLittleKtApp
 import com.lehaine.littlekt.file.vfs.readTexture
 import com.lehaine.littlekt.graphics.gl.ClearBufferMask
-import org.koin.core.context.startKoin
-import pokemongame.koin.animationTexturesModule
-import pokemongame.koin.audioClipsModule
-import pokemongame.koin.audioStreamsModule
-import pokemongame.koin.battleSceneModule
-import pokemongame.koin.pokemonTexturesModule
+import pokemongame.koin.startKoinApp
 import pokemongame.pokemon.Primeape
 import pokemongame.pokemon.Zigzagoon
 import pokemongame.pokemon.state.PokemonStats
@@ -37,15 +32,7 @@ object PokemonGame {
 
 class GameCore(context: Context) : ContextListener(context) {
     override suspend fun Context.start() {
-        startKoin {
-            modules(
-                battleSceneModule(context),
-                pokemonTexturesModule(context),
-                audioStreamsModule(context),
-                audioClipsModule(context),
-                animationTexturesModule(context),
-            )
-        }
+        startKoinApp(context)
 
         val battleScene =
             BattleScene(
