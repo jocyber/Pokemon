@@ -14,7 +14,8 @@ import org.koin.test.mock.declareMock
 import pokemongame.actions.battle.UpdateHealthAction
 import pokemongame.koin.HEALTH_BAR_TEXTURE
 import pokemongame.scene.battle.BattleEntity
-import pokemongame.utils.PokemonTestUtils
+import pokemongame.utils.deinitKoin
+import pokemongame.utils.initKoin
 
 class HealthBarTest : KoinTest {
     data class HealthValues(val totalHealth: Int, val startHealth: Int, val updatedHealth: Int)
@@ -23,7 +24,7 @@ class HealthBarTest : KoinTest {
 
     @BeforeProperty
     fun init() {
-        PokemonTestUtils.initKoin()
+        initKoin()
 
         mockTexture = declareMock<Texture>(named(HEALTH_BAR_TEXTURE))
 
@@ -31,7 +32,7 @@ class HealthBarTest : KoinTest {
         every { mockTexture.height } returns 77
     }
 
-    @AfterProperty fun deinit() = PokemonTestUtils.deinitKoin()
+    @AfterProperty fun deinit() = deinitKoin()
 
     @Provide fun battleEntities() = Arbitraries.of(BattleEntity::class.java)
 

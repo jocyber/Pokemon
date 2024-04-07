@@ -17,7 +17,8 @@ import org.assertj.core.api.Assertions.assertThat
 import pokemongame.pokemon.Primeape
 import pokemongame.pokemon.state.PokemonStats
 import pokemongame.scene.battle.PokemonBattleState
-import pokemongame.utils.PokemonTestUtils
+import pokemongame.utils.deinitKoin
+import pokemongame.utils.initKoin
 
 @PropertyDefaults(edgeCases = EdgeCasesMode.FIRST)
 class GlideTest {
@@ -34,9 +35,9 @@ class GlideTest {
             )
         }
 
-    @BeforeProperty fun init() = PokemonTestUtils.initKoin()
+    @BeforeProperty fun init() = initKoin()
 
-    @AfterProperty fun deinit() = PokemonTestUtils.deinitKoin()
+    @AfterProperty fun deinit() = deinitKoin()
 
     @Property(tries = 1500, seed = "-6218027441402253276")
     fun `actual end position is equal to expected end position`(
