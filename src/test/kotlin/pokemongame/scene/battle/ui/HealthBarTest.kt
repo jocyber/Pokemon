@@ -1,37 +1,29 @@
 package pokemongame.scene.battle.ui
 
-import com.lehaine.littlekt.Context
 import com.lehaine.littlekt.graphics.Texture
 import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkClass
 import net.jqwik.api.*
 import net.jqwik.api.Combinators.combine
 import net.jqwik.api.lifecycle.AfterProperty
 import net.jqwik.api.lifecycle.BeforeProperty
+import net.jqwik.api.state.ActionChain
 import org.assertj.core.api.Assertions.assertThat
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 import org.koin.core.qualifier.named
 import org.koin.test.KoinTest
-import org.koin.test.mock.MockProvider
 import org.koin.test.mock.declareMock
+import pokemongame.actions.battle.UpdateHealthAction
 import pokemongame.koin.HEALTH_BAR_TEXTURE
-import pokemongame.koin.battleSceneModule
 import pokemongame.scene.battle.BattleEntity
+import pokemongame.utils.PokemonTestUtils
 
 class HealthBarTest : KoinTest {
     data class HealthValues(val totalHealth: Int, val startHealth: Int, val updatedHealth: Int)
 
-    private lateinit var mockContext: Context
     private lateinit var mockTexture: Texture
 
     @BeforeProperty
     fun init() {
-        MockProvider.register { clazz -> mockkClass(clazz) }
-        mockContext = mockk<Context>()
-
-        startKoin { modules(battleSceneModule(mockContext)) }
+        PokemonTestUtils.initKoin()
 
         mockTexture = declareMock<Texture>(named(HEALTH_BAR_TEXTURE))
 
@@ -39,12 +31,12 @@ class HealthBarTest : KoinTest {
         every { mockTexture.height } returns 77
     }
 
-    @AfterProperty fun destroy() = stopKoin()
+    @AfterProperty fun deinit() = PokemonTestUtils.deinitKoin()
 
     @Provide fun battleEntities() = Arbitraries.of(BattleEntity::class.java)
 
     @Provide
-    fun healthValueArbitraries() =
+    fun healthValues() =
         combine(
                 Arbitraries.integers().greaterOrEqual(1),
                 Arbitraries.integers(),
@@ -55,10 +47,30 @@ class HealthBarTest : KoinTest {
             }
             .`as`(::HealthValues)
 
+    @Provide
+    fun healthBarUpdateActions(): Arbitrary<ActionChain<HealthBar>> {
+        val arbitraryEntity = battleEntities()
+        val arbitraryHealthValues = healthValues()
+
+        return arbitraryEntity.flatMap { entity ->
+            arbitraryHealthValues.flatMap { healthValues ->
+                ActionChain.startWith {
+                        with(healthValues) { HealthBar(startHealth, entity, totalHealth) }
+                    }
+                    .withAction(UpdateHealthAction())
+            }
+        }
+    }
+
+    @Property(seed = "-7416292700788290465")
+    fun `updateHealth produces frame index between 0 and max frame index`(
+        @ForAll("healthBarUpdateActions") healthUpdateChain: ActionChain<HealthBar>
+    ) = healthUpdateChain.run()
+
     @Property(tries = 500, seed = "1335665846044844485")
     fun `current frame never 0 when current health is greater than 0`(
         @ForAll("battleEntities") battleEntity: BattleEntity,
-        @ForAll("healthValueArbitraries") healthValues: HealthValues,
+        @ForAll("healthValues") healthValues: HealthValues,
     ) {
         Assume.that(with(healthValues) { startHealth > 0 && updatedHealth > 0 })
 
@@ -78,7 +90,7 @@ class HealthBarTest : KoinTest {
     @Property(tries = 500, seed = "-4813740741812647548")
     fun `lower updatedHealth yields a lower, or equal, frame index`(
         @ForAll("battleEntities") battleEntity: BattleEntity,
-        @ForAll("healthValueArbitraries") healthValues: HealthValues,
+        @ForAll("healthValues") healthValues: HealthValues,
     ) {
         Assume.that(with(healthValues) { updatedHealth < startHealth })
 
@@ -100,7 +112,7 @@ class HealthBarTest : KoinTest {
     @Property(tries = 500, seed = "6552245492343956169")
     fun `greater updatedHealth yields a higher, or equal, frame index`(
         @ForAll("battleEntities") battleEntity: BattleEntity,
-        @ForAll("healthValueArbitraries") healthValues: HealthValues,
+        @ForAll("healthValues") healthValues: HealthValues,
     ) {
         Assume.that(with(healthValues) { updatedHealth > startHealth })
 

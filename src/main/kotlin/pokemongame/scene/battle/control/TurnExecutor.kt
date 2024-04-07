@@ -8,21 +8,21 @@ import pokemongame.scene.battle.BattleScene
 
 /**
  * A helper class for executing the attacking phase of a battle. It takes in details of the moves
- * that will be executed this round, determines who will go first, and executes them. This class
- * will handle most of the logic associated with all the variables that goes into attacking a
- * Pokemon.
+ * that will be executed this round, determines who will go first, and executes them.
  */
 class TurnExecutor(private val battleScene: BattleScene) {
     private enum class State {
         PREPARING_TO_ATTACK,
         ATTACKING,
+        TAKING_DAMAGE,
         ENDING_TURN,
         ENDING_ROUND,
     }
 
     private var pokemonAnimationPlayer: PokemonAnimationPlayer? = null
     private var currentState = State.PREPARING_TO_ATTACK
-    private var turn = BattleEntity.ENEMY
+    private var turn = BattleEntity.PLAYER
+    private var damageExecutor: DamageExecutor? = null
 
     init {
         val (target, opposing) = getTargetsFromTurn(turn)
@@ -38,8 +38,10 @@ class TurnExecutor(private val battleScene: BattleScene) {
         when (currentState) {
             State.PREPARING_TO_ATTACK -> return preparingToAttack()
             State.ATTACKING -> attacking(dt)
+            State.TAKING_DAMAGE -> return takingDamage(dt)
             State.ENDING_TURN -> return endingTurn()
-            State.ENDING_ROUND -> return endingRound()
+            State.ENDING_ROUND ->
+                return true // run post round checks like weather, berries, abilities, status, etc
         }
 
         return false
@@ -47,7 +49,7 @@ class TurnExecutor(private val battleScene: BattleScene) {
 
     private fun preparingToAttack(): Boolean {
         // TODO: check for status like sleep and paralysis
-        with (battleScene.sceneState) {
+        with(battleScene.sceneState) {
             if (opposingTarget.isFainted || opposingTarget.isInvulnerable) {
                 // if flinched, display "but it flinched"
                 // else display "but it missed"
@@ -80,9 +82,19 @@ class TurnExecutor(private val battleScene: BattleScene) {
             return
         }
 
-        currentState = State.ENDING_TURN
+        damageExecutor = DamageExecutor(battleScene.sceneState)
+        currentState = State.TAKING_DAMAGE
         // check for recoil
         // if fainted, set state to fainting
+    }
+
+    private fun takingDamage(dt: Duration): Boolean {
+        if (damageExecutor?.updateDamage(dt) == false) {
+            return false
+        }
+
+        currentState = State.ENDING_TURN
+        return true
     }
 
     private fun endingTurn(): Boolean {
@@ -109,11 +121,6 @@ class TurnExecutor(private val battleScene: BattleScene) {
 
         currentState = State.PREPARING_TO_ATTACK
         return false
-    }
-
-    private fun endingRound(): Boolean {
-        // run post round checks like weather, berries, abilities, status, etc
-        return true
     }
 
     private fun getTargetsFromTurn(turn: BattleEntity) =

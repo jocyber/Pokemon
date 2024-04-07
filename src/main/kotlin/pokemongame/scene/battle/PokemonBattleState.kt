@@ -3,13 +3,15 @@ package pokemongame.scene.battle
 import com.lehaine.littlekt.graphics.Color
 import com.lehaine.littlekt.graphics.toFloatBits
 import com.lehaine.littlekt.math.Vec2f
+import pokemongame.pokemon.state.PokemonStats
 import pokemongame.scene.battle.ui.HealthBar
 
+// TODO: make a test generator for this class that allows the client to override what they want
 data class PokemonBattleState(
-    val stats: BattleStats = BattleStats(),
+    val stats: PokemonStats,
+    val battleStats: BattleStats = BattleStats(),
     var healthBar: HealthBar? = null,
     var position: Vec2f,
-    var currentHealth: Int,
     var colorBits: Float = Color.WHITE.toFloatBits(),
     var isAttacking: Boolean = false,
     var wasHit: Boolean = false,
@@ -17,6 +19,7 @@ data class PokemonBattleState(
     var isInvulnerable: Boolean = false,
     var turnPassed: Boolean = false,
     var isFainted: Boolean = false,
+    var isBurned: Boolean = false,
 )
 
 data class BattleStats(

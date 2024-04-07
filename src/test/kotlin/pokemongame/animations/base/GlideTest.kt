@@ -11,8 +11,13 @@ import net.jqwik.api.ForAll
 import net.jqwik.api.Property
 import net.jqwik.api.PropertyDefaults
 import net.jqwik.api.Provide
+import net.jqwik.api.lifecycle.AfterProperty
+import net.jqwik.api.lifecycle.BeforeProperty
 import org.assertj.core.api.Assertions.assertThat
+import pokemongame.pokemon.Primeape
+import pokemongame.pokemon.state.PokemonStats
 import pokemongame.scene.battle.PokemonBattleState
+import pokemongame.utils.PokemonTestUtils
 
 @PropertyDefaults(edgeCases = EdgeCasesMode.FIRST)
 class GlideTest {
@@ -22,7 +27,16 @@ class GlideTest {
 
     @Provide
     fun battleStates(): Arbitrary<PokemonBattleState> =
-        points().map { position -> PokemonBattleState(position = position, currentHealth = 1) }
+        points().map { position ->
+            PokemonBattleState(
+                position = position,
+                stats = PokemonStats(level = 1, currentHealth = 1, pokemon = Primeape)
+            )
+        }
+
+    @BeforeProperty fun init() = PokemonTestUtils.initKoin()
+
+    @AfterProperty fun deinit() = PokemonTestUtils.deinitKoin()
 
     @Property(tries = 1500, seed = "-6218027441402253276")
     fun `actual end position is equal to expected end position`(

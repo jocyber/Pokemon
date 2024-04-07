@@ -22,9 +22,7 @@ class Glide(
     private var distanceTraveled = 0f
 
     init {
-        if (seconds <= 0f) {
-            throw IllegalArgumentException("Seconds for a glide animation cannot be zero")
-        }
+        require(seconds > 0f)
 
         deltaX = (endingPoint.x - startingPoint.x) / seconds
         deltaY = (endingPoint.y - startingPoint.y) / seconds

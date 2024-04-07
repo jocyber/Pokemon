@@ -2,10 +2,10 @@ package pokemongame.pokemon.state
 
 import pokemongame.pokemon.Pokemon
 
-class PokemonModel(
+class PokemonStats(
     var level: Int,
     var currentHealth: Int,
-    val gender: Gender,
+    // val gender: Gender,
     // moves
     // ivs
     // evs

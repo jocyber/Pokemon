@@ -13,7 +13,6 @@ import com.lehaine.littlekt.util.seconds
 import org.koin.core.qualifier.named
 import org.koin.java.KoinJavaComponent.inject
 import pokemongame.animations.PokemonAnimationPlayer
-import pokemongame.animations.base.Flicker
 import pokemongame.animations.base.Glide
 import pokemongame.animations.base.SpriteAnimation
 import pokemongame.animations.base.Wait
@@ -59,7 +58,6 @@ data object Tackle : PokemonMove {
             val glideForward = Glide(startingPoint, endingPoint, seconds = TIME, currentTarget)
             val glideBack = Glide(endingPoint, startingPoint, seconds = TIME, currentTarget)
 
-            opposingTarget.currentHealth -= 1
             animationPlayer.play(sparksAnimation)
 
             val sparksPosition =
@@ -94,10 +92,6 @@ data object Tackle : PokemonMove {
                             glideBack
                         ),
                         arrayOf(Wait(.5f)),
-                        arrayOf(Flicker(opposingTarget)),
-                        arrayOf(
-                            opposingTarget.healthBar!!.updateHealth(opposingTarget.currentHealth)
-                        )
                     )
             )
         }

@@ -13,8 +13,7 @@ import pokemongame.koin.battleSceneModule
 import pokemongame.koin.pokemonTexturesModule
 import pokemongame.pokemon.Primeape
 import pokemongame.pokemon.Zigzagoon
-import pokemongame.pokemon.state.Gender
-import pokemongame.pokemon.state.PokemonModel
+import pokemongame.pokemon.state.PokemonStats
 import pokemongame.scene.SCREEN_HEIGHT
 import pokemongame.scene.SCREEN_WIDTH
 import pokemongame.scene.Weather
@@ -53,18 +52,11 @@ class GameCore(context: Context) : ContextListener(context) {
                 context,
                 backgroundTexture =
                     resourcesVfs["assets/backgrounds/grass_background.png"].readTexture(),
-                enemyPokemon =
-                    PokemonModel(
+                enemyStats = PokemonStats(level = 10, currentHealth = 1, pokemon = Zigzagoon),
+                playerStats =
+                    PokemonStats(
                         level = 10,
                         currentHealth = 1,
-                        gender = Gender.MALE,
-                        pokemon = Zigzagoon
-                    ),
-                playerPokemon =
-                    PokemonModel(
-                        level = 10,
-                        currentHealth = 1,
-                        gender = Gender.MALE,
                         pokemon = Primeape,
                     ),
                 weather = Weather.SUN,

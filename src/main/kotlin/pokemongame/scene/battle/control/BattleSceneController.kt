@@ -12,7 +12,6 @@ import com.lehaine.littlekt.input.Key
 import com.lehaine.littlekt.util.milliseconds
 import kotlin.time.Duration
 import pokemongame.scene.SCREEN_WIDTH
-import pokemongame.scene.battle.BattleEntity
 import pokemongame.scene.battle.BattleScene
 
 class BattleSceneController(private val battleScene: BattleScene) {
@@ -29,8 +28,8 @@ class BattleSceneController(private val battleScene: BattleScene) {
 
     // migrate move animation execution to the turn executor
     init {
-        val enemyPokemon = battleScene.enemyPokemon
-        val playerPokemon = battleScene.playerPokemon
+        val enemyPokemon = battleScene.enemyStats
+        val playerPokemon = battleScene.playerStats
 
         // move standing animations to BattleSceneDrawer
 
@@ -116,9 +115,9 @@ class BattleSceneController(private val battleScene: BattleScene) {
         }
 
         turnExecutor?.updateTurn(dt)
-//        if (turnExecutor?.updateTurn(dt) == true) {
-//            turnExecutor = null
-//        }
+        //        if (turnExecutor?.updateTurn(dt) == true) {
+        //            turnExecutor = null
+        //        }
 
         batch.use {
             it.draw(

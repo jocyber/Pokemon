@@ -1,10 +1,13 @@
 import org.apache.tools.ant.taskdefs.condition.Os
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     id 'application'
     id 'com.diffplug.spotless' version '6.25.0'
     id 'jacoco'
+    id 'io.gitlab.arturbosch.detekt' version '1.23.6'
 }
 
 final List<String> coverageExclusions = [
@@ -39,7 +42,25 @@ jacocoTestReport {
     }
 }
 
-// TODO: add detekt
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom "$projectDir/config/detekt-config.yml"
+    // baseline = file "$projectDir/config/baseline.xml"
+}
+
+tasks.withType(Detekt).configureEach {
+    jvmTarget = "17"
+
+    reports {
+        html.required.set(true)
+        txt.required.set(true)
+    }
+}
+
+tasks.withType(DetektCreateBaselineTask).configureEach {
+    jvmTarget = "17"
+}
 
 spotless {
     ratchetFrom 'origin/master'
@@ -78,5 +99,6 @@ if (Os.isFamily(Os.FAMILY_MAC)) {
     application.applicationDefaultJvmArgs = ['-XstartOnFirstThread']
 }
 
-check.dependsOn jacocoTestCoverageVerification
-build.dependsOn format, jacocoTestReport
+check.dependsOn jacocoTestCoverageVerification, spotlessApply
+//check.finalizedBy detektMain, detektTest
+build.dependsOn jacocoTestReport

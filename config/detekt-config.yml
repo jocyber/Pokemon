@@ -1,0 +1,19 @@
+style:
+  UnusedPrivateProperty:
+    active: true
+    allowedNames: '_|app'
+  UnusedParameter:
+    active: true
+    allowedNames: 'ignored|dt|context'
+  ReturnCount:
+    active: true
+    max: 6
+  MagicNumber:
+    active: false
+  ForbiddenComment:
+    active: false
+  WildcardImport:
+    active: true
+    excludeImports:
+      - 'java.util.*'
+      - 'net.jqwik.api.*'

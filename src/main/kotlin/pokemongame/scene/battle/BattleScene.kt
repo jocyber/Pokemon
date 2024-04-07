@@ -7,15 +7,15 @@ import org.koin.core.qualifier.named
 import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.inject
 import pokemongame.koin.BATTLE_UI_BACKGROUND
-import pokemongame.pokemon.state.PokemonModel
+import pokemongame.pokemon.state.PokemonStats
 import pokemongame.scene.Weather
 import pokemongame.scene.battle.ui.HealthBar
 
 class BattleScene(
     val context: Context,
     val backgroundTexture: Texture,
-    val enemyPokemon: PokemonModel,
-    val playerPokemon: PokemonModel,
+    val enemyStats: PokemonStats,
+    val playerStats: PokemonStats,
     weather: Weather,
 ) {
     // inject battleUIHandler
@@ -29,49 +29,49 @@ class BattleScene(
 
     val sceneState =
         BattleSceneState(
-            playerState =
-                PokemonBattleState(
-                    position = PLAYER_POS,
-                    currentHealth = playerPokemon.currentHealth,
-                ),
-            enemyState =
-                PokemonBattleState(
-                    position = ENEMY_POS,
-                    currentHealth = enemyPokemon.currentHealth,
-                ),
-            weather = weather,
-            turn = BattleEntity.PLAYER,
-        )
-        .apply {
-            currentTarget = playerState
-            opposingTarget = enemyState
-        }
+                playerState =
+                    PokemonBattleState(
+                        stats = playerStats,
+                        position = PLAYER_POS,
+                    ),
+                enemyState =
+                    PokemonBattleState(
+                        stats = enemyStats,
+                        position = ENEMY_POS,
+                    ),
+                weather = weather,
+                turn = BattleEntity.PLAYER,
+            )
+            .apply {
+                currentTarget = playerState
+                opposingTarget = enemyState
+            }
 
     init {
-        setEnemyPokemon(enemyPokemon)
-        setPlayerPokemon(playerPokemon)
+        setEnemyPokemon(enemyStats)
+        setPlayerPokemon(playerStats)
     }
 
-    fun setEnemyPokemon(pokemonModel: PokemonModel) {
+    fun setEnemyPokemon(ignored: PokemonStats) {
         sceneState.enemyState.healthBar =
             HealthBar(
-                currentHealth = enemyPokemon.currentHealth,
-                totalHealth = enemyPokemon.currentHealth,
+                currentHealth = enemyStats.currentHealth,
+                totalHealth = enemyStats.currentHealth,
                 battleEntity = BattleEntity.ENEMY,
             )
 
-        enemyPokemonTexture = get(Texture::class.java, named(enemyPokemon.pokemon.toString()))
+        enemyPokemonTexture = get(Texture::class.java, named(enemyStats.pokemon.toString()))
     }
 
-    fun setPlayerPokemon(pokemonModel: PokemonModel) {
+    fun setPlayerPokemon(ignored: PokemonStats) {
         sceneState.playerState.healthBar =
             HealthBar(
-                currentHealth = playerPokemon.currentHealth,
-                totalHealth = playerPokemon.currentHealth,
+                currentHealth = playerStats.currentHealth,
+                totalHealth = playerStats.currentHealth,
                 battleEntity = BattleEntity.PLAYER,
             )
 
-        playerPokemonTexture = get(Texture::class.java, named(playerPokemon.pokemon.toString()))
+        playerPokemonTexture = get(Texture::class.java, named(playerStats.pokemon.toString()))
     }
 
     companion object {

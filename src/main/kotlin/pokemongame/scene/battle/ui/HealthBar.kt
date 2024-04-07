@@ -57,18 +57,18 @@ class HealthBar(
         return if (updatedHealth > 0 && roundedFrame == 0) 1 else roundedFrame
     }
 
-    private companion object {
+    companion object {
         const val MAX_FRAME_INDEX = 48f
-        const val SWITCH_TIME = 0.03f
+        private const val SWITCH_TIME = 0.03f
 
-        const val WIDTH_PLAYER = 128
-        const val HEIGHT_PLAYER = 42
+        private const val WIDTH_PLAYER = 128
+        private const val HEIGHT_PLAYER = 42
 
-        const val WIDTH_ENEMY = 122
-        const val HEIGHT_ENEMY = 35
+        private const val WIDTH_ENEMY = 122
+        private const val HEIGHT_ENEMY = 35
 
-        val FRAME_RANGE = (0..MAX_FRAME_INDEX.toInt())
-        val FRAME_TIMES = FRAME_RANGE.map { SWITCH_TIME.seconds }
+        private val FRAME_RANGE = (0..MAX_FRAME_INDEX.toInt())
+        private val FRAME_TIMES = FRAME_RANGE.map { SWITCH_TIME.seconds }
 
         private val TEXTURE: Texture by
             inject(Texture::class.java, qualifier = named(HEALTH_BAR_TEXTURE))
@@ -88,7 +88,7 @@ class HealthBar(
                 BattleEntity.ENEMY to TEXTURE.slice(WIDTH_ENEMY, HEIGHT_ENEMY).flatten().toList()
             )
 
-        fun getAnimation(indices: List<Int>, battleEntity: BattleEntity) =
+        private fun getAnimation(indices: List<Int>, battleEntity: BattleEntity) =
             Animation(
                 frames = SLICES_BY_ENTITY[battleEntity]!!,
                 frameIndices = indices,

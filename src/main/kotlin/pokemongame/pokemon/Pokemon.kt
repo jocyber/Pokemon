@@ -13,6 +13,6 @@ sealed interface Pokemon {
     val backFrames: Int
 
     // based on generation 5 move sets
-    val movesByLevel: Map<Int, PokemonMove>
+    val movesByLevel: Map<Int, Lazy<PokemonMove>>
     val type: Pair<PokemonType, PokemonType?>
 }
