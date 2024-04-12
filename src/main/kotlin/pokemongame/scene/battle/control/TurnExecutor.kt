@@ -58,6 +58,8 @@ class TurnExecutor(private val battleScene: BattleScene) {
 
                 return@preparingToAttack false
             }
+
+            currentTarget.isAttacking = true
         }
 
         // check if it hits
@@ -85,6 +87,7 @@ class TurnExecutor(private val battleScene: BattleScene) {
         damageExecutor =
             DamageExecutor(battleScene.sceneState, target = battleScene.sceneState.opposingTarget)
         currentState = State.TAKING_DAMAGE
+        battleScene.sceneState.currentTarget.isAttacking = false
         // check for recoil
         // if fainted, set state to fainting
     }

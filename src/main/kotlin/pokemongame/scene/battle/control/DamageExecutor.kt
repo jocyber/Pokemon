@@ -18,33 +18,25 @@ import pokemongame.scene.battle.PokemonBattleState
 class DamageExecutor(
     private val battleSceneState: BattleSceneState,
     private val target: PokemonBattleState,
-    damage: Int? = null,
+    private val damage: Int? = null,
 ) {
-    private val damageAnimationPlayer = getDamageAnimation(damage)
+    private val damageAnimationPlayer = getDamageAnimation()
 
     fun updateDamage(dt: Duration): Boolean {
         return damageAnimationPlayer.playAnimation(dt)
     }
 
-    private fun getDamageAnimation(damage: Int? = null): PokemonAnimationPlayer {
-        target.stats.apply {
-            (damage ?: calculateDamage()).also {
-                currentHealth =
-                    when {
-                        currentHealth - it < 0 -> 0
-                        currentHealth - it > totalHealth -> totalHealth
-                        else -> currentHealth - it
-                    }
-            }
-        }
+    private fun getDamageAnimation() =
+        with(target) {
+            stats.apply { currentHealth -= damage ?: calculateDamage() }
 
-        return PokemonAnimationPlayer(
-            arrayOf(
-                if (target.wasHit) arrayOf(Flicker(target)) else arrayOf(),
-                arrayOf(target.healthBar.updateHealth(target.stats.currentHealth))
+            PokemonAnimationPlayer(
+                arrayOf(
+                    if (wasHit) arrayOf(Flicker(this)) else arrayOf(),
+                    arrayOf(healthBar.updateHealth(stats.currentHealth))
+                )
             )
-        )
-    }
+        }
 
     // take in the move that's being used
     // should really be tested on its own, so move to a new class

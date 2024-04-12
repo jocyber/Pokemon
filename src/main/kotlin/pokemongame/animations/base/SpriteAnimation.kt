@@ -15,5 +15,5 @@ class SpriteAnimation(
         updateStrategy(dt)
     }
 
-    override fun isDone(): Boolean = isDoneStrategy(totalTime)
+    override fun isDone() = isDoneStrategy(totalTime)
 }

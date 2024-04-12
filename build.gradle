@@ -50,6 +50,8 @@ detekt {
 }
 
 tasks.withType(Detekt).configureEach {
+    dependsOn spotlessApply
+
     jvmTarget = "17"
 
     reports {
@@ -100,5 +102,4 @@ if (Os.isFamily(Os.FAMILY_MAC)) {
 }
 
 check.dependsOn jacocoTestCoverageVerification, spotlessApply
-//check.finalizedBy detektMain, detektTest
 build.dependsOn jacocoTestReport

@@ -4,14 +4,22 @@ import kotlin.time.Duration
 
 private typealias MoveUpdates = Array<Array<PokemonAnimation>>
 
-/** Class for playing an animation that involves movement. */
+/**
+ * A class for playing a sequence of {@link PokemonAnimation}'s.
+ *
+ * @author Jordan Harman
+ */
 class PokemonAnimationPlayer(private val moveUpdates: MoveUpdates) {
     private var index = 0
 
     /**
-     * @param dt The deltaTime for the animation frame.
-     * @return Boolean Returns false on successful update, returns true when the animation is
-     *   finished.
+     * A function that plays all the Pokemon animations in the order in which they were specified.
+     * Upon each call, the function will update each animation of the inner list it is processing at
+     * the moment. If all animations are done, it will move to the next animation sequence.
+     *
+     * @param dt the time since the last frame
+     * @return false on successful update, true when the animation is finished
+     * @see PokemonAnimation
      */
     fun playAnimation(dt: Duration): Boolean {
         if (index == moveUpdates.size) {

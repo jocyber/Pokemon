@@ -27,6 +27,7 @@ class HealthBar(
     private var animation = getAnimation(listOf(currentFrame), battleEntity)
 
     init {
+        require(currentHealth in 0..totalHealth)
         animationPlayer.play(animation)
     }
 

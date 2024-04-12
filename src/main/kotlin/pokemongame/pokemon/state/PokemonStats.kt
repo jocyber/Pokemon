@@ -4,7 +4,7 @@ import pokemongame.pokemon.Pokemon
 
 class PokemonStats(
     var level: Int,
-    var currentHealth: Int,
+    currentHealth: Int,
     // val gender: Gender,
     // moves
     // ivs
@@ -12,4 +12,14 @@ class PokemonStats(
     // actualStats
     var totalHealth: Int,
     val pokemon: Pokemon,
-)
+) {
+    var currentHealth = currentHealth
+        set(updatedHealth) {
+            field =
+                when {
+                    updatedHealth < 0 -> 0
+                    updatedHealth > totalHealth -> totalHealth
+                    else -> updatedHealth
+                }
+        }
+}
