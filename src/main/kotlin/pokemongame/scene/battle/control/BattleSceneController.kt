@@ -10,10 +10,10 @@ import pokemongame.scene.battle.DisplayState
 // the party manager, based on the context to which it's being loaded, it can perform
 // any arbitrary action when a pokemon is selected.
 class BattleSceneController(
-    private val context: Context,
-    private val sceneState: BattleSceneState,
-    private val battleDisplayDrawer: BattleDisplayDrawer,
-    private val battleSelectionDrawer: BattleSelectionHandler,
+        private val context: Context,
+        private val sceneState: BattleSceneState,
+        private val battleDisplayDrawer: BattleDisplayDrawer,
+        private val battleSelectionDrawer: BattleActionSelector,
 ) {
     private var battleDisplayExecutor: BattleDisplayExecutor? = null
 

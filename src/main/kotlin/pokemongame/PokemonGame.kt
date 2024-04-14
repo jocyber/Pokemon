@@ -10,8 +10,8 @@ import pokemongame.scene.SCREEN_HEIGHT
 import pokemongame.scene.SCREEN_WIDTH
 import pokemongame.scene.battle.control.BattleDisplayDrawer
 import pokemongame.scene.battle.control.BattleSceneController
-import pokemongame.scene.battle.control.BattleSelectionHandler
-import pokemongame.scene.buildBattleSceneState
+import pokemongame.scene.battle.control.BattleActionSelector
+import pokemongame.scene.battle.buildBattleSceneState
 
 object PokemonGame {
     @JvmStatic
@@ -42,7 +42,7 @@ class GameCore(context: Context) : ContextListener(context) {
                         battleSceneState,
                         resourcesVfs["assets/backgrounds/grass_background.png"].readTexture()
                     ),
-                battleSelectionDrawer = BattleSelectionHandler(battleSceneState, context),
+                battleSelectionDrawer = BattleActionSelector(battleSceneState, context),
             )
 
         onRender { dt ->
