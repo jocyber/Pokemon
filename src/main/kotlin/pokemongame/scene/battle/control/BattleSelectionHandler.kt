@@ -10,6 +10,7 @@ import kotlin.time.Duration
 import org.koin.core.qualifier.named
 import org.koin.java.KoinJavaComponent.inject
 import pokemongame.koin.BATTLE_BUTTONS
+import pokemongame.koin.DIALOG_BOX
 import pokemongame.scene.SceneDrawer
 import pokemongame.scene.battle.BattleSceneState
 import pokemongame.scene.battle.DisplayState
@@ -25,6 +26,17 @@ class BattleSelectionHandler(
         handleSelector()
 
         SPRITE_BATCH.use {
+            it.draw(
+                DIALOG_BOX_TEXTURE,
+                x = 15f,
+                y = -276f,
+                width = 530f,
+                height = BUTTON_HEIGHT * 2f,
+                scaleX = 1f,
+                scaleY = BUTTON_SCALE_HEIGHT,
+                flipY = true,
+            )
+
             for ((label, position) in POSITION_BY_LABEL) {
                 val buttonPair = BUTTONS_BY_LABEL[label]!!
 
@@ -93,7 +105,7 @@ class BattleSelectionHandler(
         private const val BUTTON_SCALE_WIDTH = 1.5f
         private const val BUTTON_SCALE_HEIGHT = 1.23f
 
-        private const val LEFT_MOST_X = 500f
+        private const val LEFT_MOST_X = 550f
         private const val TOP_MOST_Y = -219f
 
         private enum class DisplayMode {
@@ -102,6 +114,7 @@ class BattleSelectionHandler(
         }
 
         private val BUTTONS_TEXTURE: Texture by inject(Texture::class.java, named(BATTLE_BUTTONS))
+        private val DIALOG_BOX_TEXTURE: Texture by inject(Texture::class.java, named(DIALOG_BOX))
 
         private val BUTTONS_BY_LABEL =
             arrayOf("FIGHT", "POKEMON", "BAG", "RUN", "CALL", "BALL_R", "ROCK", "BAIT", "BALL_Y")

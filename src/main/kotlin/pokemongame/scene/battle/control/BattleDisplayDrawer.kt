@@ -149,7 +149,7 @@ class BattleDisplayDrawer(
                     x = 0f,
                     y = -287f,
                     width = SCREEN_WIDTH,
-                    scaleY = 2.976f,
+                    height = 136f,
                     flipY = true,
                 )
             }

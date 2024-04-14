@@ -15,14 +15,19 @@ fun battleSceneModule(context: Context) = module {
     }
 
     single(named(BATTLE_UI_BACKGROUND)) {
-        runBlocking { context.resourcesVfs["assets/text_boxes/black_text_box.png"].readTexture() }
+        runBlocking { context.resourcesVfs["assets/sprites/battle_box.jpg"].readTexture() }
     }
 
     single(named(BATTLE_BUTTONS)) {
         runBlocking { context.resourcesVfs["assets/sprites/battle_buttons.png"].readTexture() }
+    }
+
+    single(named(DIALOG_BOX)) {
+        runBlocking { context.resourcesVfs["assets/sprites/dialog_box.png"].readTexture() }
     }
 }
 
 const val HEALTH_BAR_TEXTURE = "HealthTexture"
 const val BATTLE_UI_BACKGROUND = "BattleUiBackground"
 const val BATTLE_BUTTONS = "BattleButtons"
+const val DIALOG_BOX = "DialogBox"
