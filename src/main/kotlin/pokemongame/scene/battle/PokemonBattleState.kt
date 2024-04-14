@@ -11,6 +11,7 @@ data class PokemonBattleState(
     val stats: PokemonStats,
     val battleStats: BattleStats = BattleStats(),
     var position: Vec2f,
+    val healthBar: HealthBar,
     var colorBits: Float = Color.WHITE.toFloatBits(),
     var isAttacking: Boolean = false,
     var wasHit: Boolean = false,
@@ -19,9 +20,7 @@ data class PokemonBattleState(
     var turnPassed: Boolean = false,
     var isFainted: Boolean = false,
     var isBurned: Boolean = false,
-) {
-    lateinit var healthBar: HealthBar
-}
+)
 
 data class BattleStats(
     var attack: Int = 0,

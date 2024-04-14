@@ -17,10 +17,11 @@ import pokemongame.scene.battle.BattleEntity
 
 class HealthBar(
     currentHealth: Int,
-    val battleEntity: BattleEntity,
     val totalHealth: Int,
+    private val battleEntity: BattleEntity,
 ) {
     val animationPlayer = AnimationPlayer<TextureSlice>()
+
     var currentFrame = currentFrameFromPercent(currentHealth, totalHealth)
         private set
 

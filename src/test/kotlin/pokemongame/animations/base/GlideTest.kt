@@ -16,7 +16,9 @@ import net.jqwik.api.lifecycle.BeforeProperty
 import org.assertj.core.api.Assertions.assertThat
 import pokemongame.pokemon.Primeape
 import pokemongame.pokemon.state.PokemonStats
+import pokemongame.scene.battle.BattleEntity
 import pokemongame.scene.battle.PokemonBattleState
+import pokemongame.scene.battle.ui.HealthBar
 import pokemongame.utils.deinitKoin
 import pokemongame.utils.initKoin
 
@@ -32,7 +34,8 @@ class GlideTest {
             PokemonBattleState(
                 position = position,
                 stats =
-                    PokemonStats(level = 1, currentHealth = 1, pokemon = Primeape, totalHealth = 1)
+                    PokemonStats(level = 1, currentHealth = 1, pokemon = Primeape, totalHealth = 1),
+                healthBar = HealthBar(1, 100, BattleEntity.PLAYER)
             )
         }
 

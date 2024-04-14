@@ -1,35 +1,48 @@
 package pokemongame.scene.battle.control
 
+import com.lehaine.littlekt.Context
 import com.lehaine.littlekt.input.Key
 import kotlin.time.Duration
-import pokemongame.scene.SceneDrawer
-import pokemongame.scene.battle.BattleScene
+import pokemongame.scene.battle.BattleExecutionState
+import pokemongame.scene.battle.BattleSceneState
+import pokemongame.scene.battle.DisplayState
 
-class BattleSceneController(private val battleScene: BattleScene) {
-    private enum class BATTLE_STATE {
-        BATTLE_SCENE,
-    }
-
-    // have a move selector and bag handler
-    private var turnExecutor: TurnExecutor? = null
-
-    private val currentState = BATTLE_STATE.BATTLE_SCENE
-
-    private val sceneDrawerByInput =
-        mapOf<BATTLE_STATE, SceneDrawer>(
-            BATTLE_STATE.BATTLE_SCENE to BattleSceneDrawer(battleScene)
-        )
+// the party manager, based on the context to which it's being loaded, it can perform
+// any arbitrary action when a pokemon is selected.
+class BattleSceneController(
+    private val context: Context,
+    private val sceneState: BattleSceneState,
+    private val battleDisplayDrawer: BattleDisplayDrawer,
+    private val battleSelectionDrawer: BattleSelectionHandler,
+) {
+    private var battleDisplayExecutor: BattleDisplayExecutor? = null
 
     fun controlLogic(dt: Duration) {
-        if (battleScene.context.input.isKeyPressed(Key.E) && turnExecutor == null) {
-            turnExecutor = TurnExecutor(battleScene)
+        when (sceneState.displayState) {
+            DisplayState.BATTLE -> controlBattle(dt)
+            DisplayState.BAG -> {}
+            DisplayState.PARTY -> {}
         }
+    }
 
-        //        if (turnExecutor?.updateTurn(dt) == true) {
-        //            turnExecutor = null
-        //        }
+    private fun controlBattle(dt: Duration) {
+        battleDisplayDrawer.draw(dt)
+        battleSelectionDrawer.draw(dt)
 
-        sceneDrawerByInput[currentState]!!.draw(dt)
-        turnExecutor?.updateTurn(dt)
+        when (sceneState.battleState) {
+            BattleExecutionState.USER_SELECTING -> {
+                val input = context.input
+
+                when {
+                    input.isKeyPressed(Key.E) -> {
+                        if (battleDisplayExecutor == null) {
+                            battleDisplayExecutor = BattleDisplayExecutor(sceneState)
+                            sceneState.battleState = BattleExecutionState.EXECUTING_BATTLE
+                        }
+                    }
+                }
+            }
+            BattleExecutionState.EXECUTING_BATTLE -> battleDisplayExecutor!!.updateTurn(dt)
+        }
     }
 }

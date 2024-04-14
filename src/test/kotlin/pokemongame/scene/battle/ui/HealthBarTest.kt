@@ -56,7 +56,7 @@ class HealthBarTest : KoinTest {
         return arbitraryEntity.flatMap { entity ->
             arbitraryHealthValues.flatMap { healthValues ->
                 ActionChain.startWith {
-                        with(healthValues) { HealthBar(startHealth, entity, totalHealth) }
+                        with(healthValues) { HealthBar(startHealth, totalHealth, entity) }
                     }
                     .withAction(UpdateHealthAction())
             }
@@ -79,8 +79,8 @@ class HealthBarTest : KoinTest {
             with(healthValues) {
                 HealthBar(
                     startHealth,
-                    battleEntity,
                     totalHealth,
+                    battleEntity,
                 )
             }
 
@@ -99,8 +99,8 @@ class HealthBarTest : KoinTest {
             with(healthValues) {
                 HealthBar(
                     startHealth,
-                    battleEntity,
                     totalHealth,
+                    battleEntity,
                 )
             }
 
@@ -121,8 +121,8 @@ class HealthBarTest : KoinTest {
             with(healthValues) {
                 HealthBar(
                     startHealth,
-                    battleEntity,
                     totalHealth,
+                    battleEntity,
                 )
             }
 
@@ -136,7 +136,7 @@ class HealthBarTest : KoinTest {
     fun `total health minus itself yields zero health`(
         @ForAll("battleEntities") battleEntity: BattleEntity
     ) {
-        val healthBar = HealthBar(100, battleEntity, 100)
+        val healthBar = HealthBar(100, 100, battleEntity)
         healthBar.updateHealth(0)
 
         assertThat(healthBar.currentFrame).isEqualTo(0)
@@ -146,7 +146,7 @@ class HealthBarTest : KoinTest {
     fun `zero health plus total health yields total health`(
         @ForAll("battleEntities") battleEntity: BattleEntity
     ) {
-        val healthBar = HealthBar(0, battleEntity, 100)
+        val healthBar = HealthBar(0, 100, battleEntity)
         healthBar.updateHealth(100)
 
         assertThat(healthBar.currentFrame).isEqualTo(48)

@@ -4,21 +4,13 @@ import kotlin.time.Duration
 import pokemongame.animations.PokemonAnimationPlayer
 import pokemongame.moves.Tackle
 import pokemongame.scene.battle.BattleEntity
-import pokemongame.scene.battle.BattleScene
+import pokemongame.scene.battle.BattleSceneState
 
 /**
  * A helper class for executing the attacking phase of a battle. It takes in details of the moves
  * that will be executed this round, determines who will go first, and executes them.
  */
-class TurnExecutor(private val battleScene: BattleScene) {
-    private enum class State {
-        PREPARING_TO_ATTACK,
-        ATTACKING,
-        TAKING_DAMAGE,
-        ENDING_TURN,
-        ENDING_ROUND,
-    }
-
+class BattleDisplayExecutor(private val sceneState: BattleSceneState) {
     private var pokemonAnimationPlayer: PokemonAnimationPlayer? = null
     private var currentState = State.PREPARING_TO_ATTACK
     private var turn = BattleEntity.PLAYER
@@ -27,10 +19,10 @@ class TurnExecutor(private val battleScene: BattleScene) {
     init {
         val (target, opposing) = getTargetsFromTurn(turn)
 
-        battleScene.sceneState.apply {
+        sceneState.apply {
             currentTarget = target
             opposingTarget = opposing
-            turn = this@TurnExecutor.turn
+            turn = this@BattleDisplayExecutor.turn
         }
     }
 
@@ -49,7 +41,7 @@ class TurnExecutor(private val battleScene: BattleScene) {
 
     private fun preparingToAttack(): Boolean {
         // TODO: check for status like sleep and paralysis
-        with(battleScene.sceneState) {
+        with(sceneState) {
             if (opposingTarget.isFainted || opposingTarget.isInvulnerable) {
                 // if flinched, display "but it flinched"
                 // else display "but it missed"
@@ -69,7 +61,7 @@ class TurnExecutor(private val battleScene: BattleScene) {
             val moveAnimation = Tackle
 
             // TODO: take into account multi-hit moves and multi-turn moves
-            pokemonAnimationPlayer = moveAnimation.attackAnimation(battleScene.sceneState)
+            pokemonAnimationPlayer = moveAnimation.attackAnimation(sceneState)
             currentState = State.ATTACKING
         } else {
             println("But it missed")
@@ -84,10 +76,9 @@ class TurnExecutor(private val battleScene: BattleScene) {
             return
         }
 
-        damageExecutor =
-            DamageExecutor(battleScene.sceneState, target = battleScene.sceneState.opposingTarget)
+        damageExecutor = DamageExecutor(sceneState, target = sceneState.opposingTarget)
         currentState = State.TAKING_DAMAGE
-        battleScene.sceneState.currentTarget.isAttacking = false
+        sceneState.currentTarget.isAttacking = false
         // check for recoil
         // if fainted, set state to fainting
     }
@@ -107,14 +98,14 @@ class TurnExecutor(private val battleScene: BattleScene) {
         target.turnPassed = true
         turn = if (turn == BattleEntity.PLAYER) BattleEntity.ENEMY else BattleEntity.PLAYER
 
-        battleScene.sceneState.apply {
+        sceneState.apply {
             currentTarget = opposing
             opposingTarget = target
-            turn = this@TurnExecutor.turn
+            turn = this@BattleDisplayExecutor.turn
         }
 
         if (target.turnPassed && opposing.turnPassed) {
-            battleScene.sceneState.apply {
+            sceneState.apply {
                 enemyState.turnPassed = false
                 playerState.turnPassed = false
             }
@@ -128,8 +119,18 @@ class TurnExecutor(private val battleScene: BattleScene) {
     }
 
     private fun getTargetsFromTurn(turn: BattleEntity) =
-        with(battleScene.sceneState) {
+        with(sceneState) {
             if (turn == BattleEntity.PLAYER) Pair(playerState, enemyState)
             else Pair(enemyState, playerState)
         }
+
+    private companion object {
+        private enum class State {
+            PREPARING_TO_ATTACK,
+            ATTACKING,
+            TAKING_DAMAGE,
+            ENDING_TURN,
+            ENDING_ROUND,
+        }
+    }
 }

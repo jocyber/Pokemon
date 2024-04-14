@@ -1,6 +1,7 @@
 package pokemongame.scene.battle.control
 
 import com.lehaine.littlekt.graphics.Color
+import com.lehaine.littlekt.graphics.Texture
 import com.lehaine.littlekt.graphics.g2d.Animation
 import com.lehaine.littlekt.graphics.g2d.AnimationPlayer
 import com.lehaine.littlekt.graphics.g2d.TextureSlice
@@ -9,11 +10,20 @@ import com.lehaine.littlekt.graphics.slice
 import com.lehaine.littlekt.graphics.toFloatBits
 import com.lehaine.littlekt.util.milliseconds
 import kotlin.time.Duration
+import org.koin.core.qualifier.named
+import org.koin.java.KoinJavaComponent.get
+import pokemongame.koin.BATTLE_UI_BACKGROUND
 import pokemongame.scene.SCREEN_WIDTH
 import pokemongame.scene.SceneDrawer
-import pokemongame.scene.battle.BattleScene
+import pokemongame.scene.battle.BattleSceneState
 
-class BattleSceneDrawer(private val battleScene: BattleScene) : SceneDrawer() {
+class BattleDisplayDrawer(
+    private val sceneState: BattleSceneState,
+    private val background: Texture,
+) : SceneDrawer() {
+    private val battleSelectionBackground: Texture =
+        get(Texture::class.java, named(BATTLE_UI_BACKGROUND))
+
     private val enemyAnimationPlayer: AnimationPlayer<TextureSlice>
     private val playerAnimationPlayer: AnimationPlayer<TextureSlice>
 
@@ -21,11 +31,11 @@ class BattleSceneDrawer(private val battleScene: BattleScene) : SceneDrawer() {
     private val playerAnimation: Animation<TextureSlice>
 
     init {
-        val enemyPokemon = battleScene.enemyStats
-        val playerPokemon = battleScene.playerStats
+        val enemyPokemon = sceneState.enemyState.stats
+        val playerPokemon = sceneState.playerState.stats
 
         val enemySlices =
-            battleScene.enemyPokemonTexture
+            enemyPokemon.texture
                 .slice(
                     sliceWidth = enemyPokemon.pokemon.frontTextureWidth,
                     sliceHeight = enemyPokemon.pokemon.frontTextureHeight
@@ -36,14 +46,13 @@ class BattleSceneDrawer(private val battleScene: BattleScene) : SceneDrawer() {
         val playerSlices =
             (0..playerPokemon.pokemon.backFrames).map {
                 TextureSlice(
-                    battleScene.playerPokemonTexture,
+                    playerPokemon.texture,
                     x = playerPokemon.pokemon.backTextureWidth * it + 1,
                     y = 0,
                     width = playerPokemon.pokemon.backTextureWidth,
                     height = playerPokemon.pokemon.backTextureHeight,
                 )
             }
-        battleScene.playerPokemonTexture
 
         this.enemyAnimationPlayer = AnimationPlayer()
         this.enemyAnimation =
@@ -70,10 +79,10 @@ class BattleSceneDrawer(private val battleScene: BattleScene) : SceneDrawer() {
         playerAnimationPlayer.update(dt)
 
         SPRITE_BATCH.use {
-            with(battleScene.sceneState) {
+            with(sceneState) {
                 // draw background
                 it.draw(
-                    battleScene.backgroundTexture,
+                    background,
                     x = 0f,
                     y = -150f,
                     width = SCREEN_WIDTH,
@@ -135,13 +144,12 @@ class BattleSceneDrawer(private val battleScene: BattleScene) : SceneDrawer() {
                     )
                 }
 
-                // draw the move select background
                 it.draw(
-                    battleScene.moveSelectBackground,
+                    battleSelectionBackground,
                     x = 0f,
                     y = -287f,
                     width = SCREEN_WIDTH,
-                    scaleY = 2.978f,
+                    scaleY = 2.976f,
                     flipY = true,
                 )
             }
