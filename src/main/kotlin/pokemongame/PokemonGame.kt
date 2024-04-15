@@ -37,12 +37,6 @@ class GameCore(context: Context) : ContextListener(context) {
             BattleSceneController(
                 context,
                 sceneState = battleSceneState,
-                battleDisplayDrawer =
-                    BattleDisplayDrawer(
-                        battleSceneState,
-                        resourcesVfs["assets/backgrounds/grass_background.png"].readTexture()
-                    ),
-                battleSelectionDrawer = BattleActionSelector(battleSceneState, context),
             )
 
         onRender { dt ->

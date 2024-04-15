@@ -1,6 +1,7 @@
 package pokemongame.scene.battle
 
 import com.lehaine.littlekt.math.Vec2f
+import pokemongame.moves.Tackle
 import pokemongame.pokemon.Primeape
 import pokemongame.pokemon.Zigzagoon
 import pokemongame.pokemon.state.PokemonStats
@@ -13,13 +14,15 @@ data class BattleSceneState(
     var enemyState: PokemonBattleState,
     var turn: BattleEntity = BattleEntity.PLAYER,
     var weather: Weather,
-    var battleState: BattleExecutionState = BattleExecutionState.USER_SELECTING,
+    var battleState: BattleExecutionState = BattleExecutionState.USER_SELECTING_ACTION,
     var displayState: DisplayState = DisplayState.BATTLE,
     var isSpecialScreenActive: Boolean = false,
     var isPhysicalScreenActive: Boolean = false,
 ) : SceneState() {
     lateinit var currentTarget: PokemonBattleState
     lateinit var opposingTarget: PokemonBattleState
+
+    var selectedMove: String = "Tackle"
 
     override val availableActions = listOf(BattleAction.FIGHT, BattleAction.BAG, BattleAction.POKEMON, BattleAction.RUN)
 
@@ -35,7 +38,8 @@ enum class DisplayState {
 }
 
 enum class BattleExecutionState {
-    USER_SELECTING,
+    USER_SELECTING_ACTION,
+    USER_SELECTING_MOVE,
     EXECUTING_BATTLE,
 }
 
@@ -49,6 +53,7 @@ fun buildBattleSceneState() =
                 currentHealth = 37,
                 pokemon = Primeape,
                 totalHealth = 50,
+                moves = mutableListOf(Tackle, null, null, null),
             ),
             position = Vec2f(125f, -200f),
             healthBar = HealthBar(37, 50, BattleEntity.PLAYER)
@@ -61,6 +66,7 @@ fun buildBattleSceneState() =
                 currentHealth = 5,
                 pokemon = Zigzagoon,
                 totalHealth = 10,
+                moves = mutableListOf(Tackle, null, null, null),
             ),
             position = Vec2f(650f, 30f),
             healthBar = HealthBar(5, 10, BattleEntity.ENEMY),
