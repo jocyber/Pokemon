@@ -6,6 +6,8 @@ import com.lehaine.littlekt.math.Vec2f
 import org.koin.core.qualifier.named
 import org.koin.java.KoinJavaComponent.inject
 import pokemongame.koin.DIALOG_BOX
+import pokemongame.koin.DISPLAY_BOX
+import pokemongame.scene.SCREEN_WIDTH
 import kotlin.time.Duration
 import pokemongame.scene.SceneDrawer
 import pokemongame.scene.battle.BattleSceneState
@@ -17,6 +19,7 @@ import pokemongame.types.PokemonType.Companion.BUTTON_WIDTH
 class MoveSelector(
     private val sceneState: BattleSceneState,
 ) : SceneDrawer() {
+    private var selectedMove = "Tackle"
 
     override fun draw(dt: Duration) {
         SPRITE_BATCH.use {
@@ -25,8 +28,8 @@ class MoveSelector(
                 val position = POSITIONS[indexedMove.index]
 
                 it.draw(
-                    slice = if (indexedMove.value.toString() == sceneState.selectedMove) buttonPair.second else buttonPair.first,
-                    x = position.x + if (indexedMove.index == 1 || indexedMove.index == 3) RIGHT_OFFSET else 0,
+                    slice = if (indexedMove.value.toString() == selectedMove) buttonPair.second else buttonPair.first,
+                    x = position.x,
                     y = position.y,
                     width = BUTTON_WIDTH.toFloat(),
                     height = BUTTON_HEIGHT.toFloat(),
@@ -35,19 +38,28 @@ class MoveSelector(
                     flipY = true,
                 )
             }
+
+            it.draw(
+                DISPLAY_BOX_TEXTURE,
+                x = DISPLAY_BOX_START_X,
+                y = -286f,
+                width = SCREEN_WIDTH - DISPLAY_BOX_START_X - LEFT_MOST_X * 2 + LEFT_MOST_X,
+                height = BUTTON_HEIGHT * BUTTON_SCALE_HEIGHT * 2,
+                flipY = true,
+            )
         }
     }
 
     companion object {
-        private val DIALOG_BOX_TEXTURE: Texture by inject(Texture::class.java, named(DIALOG_BOX))
+        private val DISPLAY_BOX_TEXTURE: Texture by inject(Texture::class.java, named(DISPLAY_BOX))
 
-        private const val BUTTON_SCALE_WIDTH = 1.6f
-        private const val BUTTON_SCALE_HEIGHT = 1.25f
+        private const val BUTTON_SCALE_WIDTH = 1.80f
+        private const val BUTTON_SCALE_HEIGHT = 1.40f
 
-        private const val RIGHT_OFFSET = 40
+        private const val LEFT_MOST_X = 20f
+        private const val TOP_MOST_Y = -222f
 
-        private const val LEFT_MOST_X = 25f
-        private const val TOP_MOST_Y = -219f
+        private const val DISPLAY_BOX_START_X = LEFT_MOST_X + BUTTON_WIDTH * BUTTON_SCALE_WIDTH * 2 + LEFT_MOST_X
 
         private val TOP_LEFT = Vec2f(LEFT_MOST_X, TOP_MOST_Y)
         private val TOP_RIGHT = Vec2f(LEFT_MOST_X + BUTTON_WIDTH * BUTTON_SCALE_WIDTH, TOP_MOST_Y)

@@ -22,8 +22,6 @@ data class BattleSceneState(
     lateinit var currentTarget: PokemonBattleState
     lateinit var opposingTarget: PokemonBattleState
 
-    var selectedMove: String = "Tackle"
-
     override val availableActions = listOf(BattleAction.FIGHT, BattleAction.BAG, BattleAction.POKEMON, BattleAction.RUN)
 
     init {

@@ -42,7 +42,7 @@ class BattleActionSelector(
             it.draw(
                 DIALOG_BOX_TEXTURE,
                 x = 15f,
-                y = -276f,
+                y = -278f,
                 width = 530f,
                 height = BUTTON_HEIGHT * 2f,
                 scaleX = 1f,
@@ -105,7 +105,7 @@ class BattleActionSelector(
         private const val BUTTON_SCALE_HEIGHT = 1.23f
 
         private const val LEFT_MOST_X = 550f
-        private const val TOP_MOST_Y = -219f
+        private const val TOP_MOST_Y = -223f
 
         private val TOP_LEFT = Vec2f(LEFT_MOST_X, TOP_MOST_Y)
         private val TOP_RIGHT = Vec2f(LEFT_MOST_X + BUTTON_WIDTH * BUTTON_SCALE_WIDTH, TOP_MOST_Y)
