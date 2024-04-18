@@ -3,14 +3,11 @@ package pokemongame
 import com.lehaine.littlekt.Context
 import com.lehaine.littlekt.ContextListener
 import com.lehaine.littlekt.createLittleKtApp
-import com.lehaine.littlekt.file.vfs.readTexture
 import com.lehaine.littlekt.graphics.gl.ClearBufferMask
 import pokemongame.koin.startKoinApp
-import pokemongame.scene.SCREEN_HEIGHT
-import pokemongame.scene.SCREEN_WIDTH
-import pokemongame.scene.battle.control.BattleDisplayDrawer
+import pokemongame.scene.battle.SCREEN_HEIGHT
+import pokemongame.scene.battle.SCREEN_WIDTH
 import pokemongame.scene.battle.control.BattleSceneController
-import pokemongame.scene.battle.control.BattleActionSelector
 import pokemongame.scene.battle.buildBattleSceneState
 
 object PokemonGame {

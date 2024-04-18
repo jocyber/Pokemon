@@ -1,0 +1,11 @@
+package pokemongame.scene.battle
+
+import kotlin.math.ceil
+
+const val SCREEN_WIDTH = 960f
+const val SCREEN_HEIGHT = 640f
+
+val BATTLE_DISPLAY_HEIGHT = ceil(SCREEN_HEIGHT * .75f)
+val INPUT_BACKGROUND_HEIGHT = SCREEN_HEIGHT - BATTLE_DISPLAY_HEIGHT
+
+val INPUT_HEIGHT = INPUT_BACKGROUND_HEIGHT - 10f

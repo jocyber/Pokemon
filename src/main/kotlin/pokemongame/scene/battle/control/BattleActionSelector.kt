@@ -13,8 +13,9 @@ import pokemongame.scene.SceneDrawer
 import pokemongame.scene.SceneState
 import pokemongame.scene.battle.BattleAction
 import pokemongame.scene.battle.BattleAction.Companion.BUTTONS_BY_LABEL
-import pokemongame.scene.battle.BattleAction.Companion.BUTTON_HEIGHT
-import pokemongame.scene.battle.BattleAction.Companion.BUTTON_WIDTH
+import pokemongame.scene.battle.INPUT_BACKGROUND_HEIGHT
+import pokemongame.scene.battle.INPUT_HEIGHT
+import pokemongame.scene.battle.SCREEN_WIDTH
 
 class BattleActionSelector(
     private val sceneState: SceneState,
@@ -41,12 +42,10 @@ class BattleActionSelector(
         SPRITE_BATCH.use {
             it.draw(
                 DIALOG_BOX_TEXTURE,
-                x = 15f,
-                y = -278f,
-                width = 530f,
-                height = BUTTON_HEIGHT * 2f,
-                scaleX = 1f,
-                scaleY = BUTTON_SCALE_HEIGHT,
+                x = HORIZONTAL_SPACING,
+                y = TOP_MOST_Y - 75f,
+                width = INPUT_BOX_WIDTH,
+                height = INPUT_HEIGHT,
                 flipY = true,
             )
 
@@ -58,10 +57,8 @@ class BattleActionSelector(
                     slice = if (label == sceneState.selectedAction) buttonPair.second else buttonPair.first,
                     x = position.x,
                     y = position.y,
-                    width = BUTTON_WIDTH.toFloat(),
-                    height = BUTTON_HEIGHT.toFloat(),
-                    scaleX = BUTTON_SCALE_WIDTH,
-                    scaleY = BUTTON_SCALE_HEIGHT,
+                    width = ACTION_BUTTON_WIDTH,
+                    height = ACTION_BUTTON_HEIGHT,
                     flipY = true,
                 )
             }
@@ -101,18 +98,21 @@ class BattleActionSelector(
         }
 
     companion object {
-        private const val BUTTON_SCALE_WIDTH = 1.5f
-        private const val BUTTON_SCALE_HEIGHT = 1.23f
+        private const val HORIZONTAL_SPACING = 10f
+        private const val INPUT_BOX_WIDTH = 500f
 
-        private const val LEFT_MOST_X = 550f
-        private const val TOP_MOST_Y = -223f
+        private val ACTION_BUTTON_HEIGHT = INPUT_HEIGHT / 2f
+        private const val ACTION_BUTTON_WIDTH = (SCREEN_WIDTH - INPUT_BOX_WIDTH - HORIZONTAL_SPACING * 3) / 2f
+
+        private const val LEFT_MOST_X = HORIZONTAL_SPACING * 2 + INPUT_BOX_WIDTH
+        private const val TOP_MOST_Y = -244f
 
         private val TOP_LEFT = Vec2f(LEFT_MOST_X, TOP_MOST_Y)
-        private val TOP_RIGHT = Vec2f(LEFT_MOST_X + BUTTON_WIDTH * BUTTON_SCALE_WIDTH, TOP_MOST_Y)
-        private val BOTTOM_LEFT = Vec2f(LEFT_MOST_X, TOP_MOST_Y - BUTTON_HEIGHT * BUTTON_SCALE_HEIGHT)
+        private val TOP_RIGHT = Vec2f(LEFT_MOST_X + ACTION_BUTTON_WIDTH, TOP_MOST_Y)
+        private val BOTTOM_LEFT = Vec2f(LEFT_MOST_X, TOP_MOST_Y - ACTION_BUTTON_HEIGHT)
         private val BOTTOM_RIGHT = Vec2f(
-            LEFT_MOST_X + BUTTON_WIDTH * BUTTON_SCALE_WIDTH,
-            TOP_MOST_Y - BUTTON_HEIGHT * BUTTON_SCALE_HEIGHT
+            LEFT_MOST_X + ACTION_BUTTON_WIDTH,
+            TOP_MOST_Y - ACTION_BUTTON_HEIGHT
         )
 
         private val DIALOG_BOX_TEXTURE: Texture by inject(Texture::class.java, named(DIALOG_BOX))

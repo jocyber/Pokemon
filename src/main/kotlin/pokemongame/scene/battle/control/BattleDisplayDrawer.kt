@@ -13,9 +13,8 @@ import kotlin.time.Duration
 import org.koin.core.qualifier.named
 import org.koin.java.KoinJavaComponent.get
 import pokemongame.koin.BATTLE_UI_BACKGROUND
-import pokemongame.scene.SCREEN_WIDTH
 import pokemongame.scene.SceneDrawer
-import pokemongame.scene.battle.BattleSceneState
+import pokemongame.scene.battle.*
 
 class BattleDisplayDrawer(
     private val sceneState: BattleSceneState,
@@ -84,9 +83,9 @@ class BattleDisplayDrawer(
                 it.draw(
                     background,
                     x = 0f,
-                    y = -150f,
+                    y = -160f,
                     width = SCREEN_WIDTH,
-                    scaleY = 4f,
+                    height = BATTLE_DISPLAY_HEIGHT,
                     flipY = true
                 )
 
@@ -127,7 +126,7 @@ class BattleDisplayDrawer(
                     it.draw(
                         playerState.healthBar.animationPlayer.currentKeyFrame!!,
                         x = 576f,
-                        y = -120f,
+                        y = -140f,
                         scaleX = 3f,
                         scaleY = 2.75f,
                         flipY = true
@@ -137,7 +136,7 @@ class BattleDisplayDrawer(
                     it.draw(
                         enemyState.healthBar.animationPlayer.currentKeyFrame!!,
                         x = 0f,
-                        y = 140f,
+                        y = 180f,
                         scaleX = 3f,
                         scaleY = 2.75f,
                         flipY = true,
@@ -147,9 +146,9 @@ class BattleDisplayDrawer(
                 it.draw(
                     battleSelectionBackground,
                     x = 0f,
-                    y = -287f,
+                    y = -320f,
                     width = SCREEN_WIDTH,
-                    height = 136f,
+                    height = INPUT_BACKGROUND_HEIGHT,
                     flipY = true,
                 )
             }
