@@ -19,10 +19,12 @@ data class BattleSceneState(
     var isSpecialScreenActive: Boolean = false,
     var isPhysicalScreenActive: Boolean = false,
 ) : SceneState() {
+    override val availableActions = listOf(BattleAction.FIGHT, BattleAction.BAG, BattleAction.POKEMON, BattleAction.RUN)
+
     lateinit var currentTarget: PokemonBattleState
     lateinit var opposingTarget: PokemonBattleState
 
-    override val availableActions = listOf(BattleAction.FIGHT, BattleAction.BAG, BattleAction.POKEMON, BattleAction.RUN)
+    var selectedMove = "Tackle"
 
     init {
         selectedAction = availableActions[0]

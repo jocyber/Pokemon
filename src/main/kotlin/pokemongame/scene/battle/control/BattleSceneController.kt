@@ -21,7 +21,7 @@ class BattleSceneController(
         runBlocking { context.resourcesVfs["assets/backgrounds/grass_background.png"].readTexture() }
     )
     private val battleSelectionDrawer = BattleActionSelector(sceneState, context)
-    private val moveSelector = MoveSelector(sceneState)
+    private val moveSelector = MoveSelector(sceneState, context)
 
     private var battleDisplayExecutor: BattleDisplayExecutor? = null
 
