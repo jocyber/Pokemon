@@ -1,6 +1,5 @@
 package pokemongame.moves
 
-import pokemongame.animations.PokemonAnimationPlayer
 import pokemongame.scene.battle.BattleEntity
 import pokemongame.scene.battle.BattleSceneState
 import pokemongame.types.PokemonType
@@ -44,5 +43,5 @@ sealed interface PokemonMove {
      * @return PokemonAnimationPlayer an object that plays an animation that was built from a move
      * @see BattleEntity
      */
-    fun attackAnimation(battleSceneState: BattleSceneState): PokemonAnimationPlayer
+    fun attackAnimation(battleSceneState: BattleSceneState): Nothing
 }

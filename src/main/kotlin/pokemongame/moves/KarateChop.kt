@@ -1,6 +1,5 @@
 package pokemongame.moves
 
-import pokemongame.animations.PokemonAnimationPlayer
 import pokemongame.scene.battle.BattleSceneState
 import pokemongame.types.PokemonType
 
@@ -12,7 +11,5 @@ data object KarateChop : PokemonMove {
     override val isContactMove = true
     override val type = PokemonType.FIGHTING
 
-    override fun attackAnimation(battleSceneState: BattleSceneState): PokemonAnimationPlayer {
-        TODO("Not yet implemented")
-    }
+    override fun attackAnimation(battleSceneState: BattleSceneState) = TODO("WIP")
 }

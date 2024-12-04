@@ -1,8 +1,5 @@
 package pokemongame.pokemon.state
 
-import com.lehaine.littlekt.graphics.Texture
-import org.koin.core.qualifier.named
-import org.koin.java.KoinJavaComponent.inject
 import pokemongame.moves.PokemonMove
 import pokemongame.pokemon.Pokemon
 
@@ -26,6 +23,4 @@ class PokemonStats(
                     else -> updatedHealth
                 }
         }
-
-    val texture: Texture by inject(Texture::class.java, named(pokemon.toString()))
 }
