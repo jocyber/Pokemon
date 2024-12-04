@@ -19,7 +19,7 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(23)
 }
 
 if (Os.isFamily(Os.FAMILY_MAC)) {
