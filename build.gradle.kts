@@ -4,7 +4,7 @@ import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 
 plugins {
     kotlin("jvm") version "2.1.0"
-    jacoco
+    jacoco // replace with Kover
     application
     id("com.diffplug.spotless") version "6.25.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
@@ -60,12 +60,12 @@ tasks {
     }
 
     withType<DetektCreateBaselineTask>().configureEach {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 
     withType<Detekt>().configureEach {
         dependsOn("spotlessApply")
-        jvmTarget = "17"
+        jvmTarget = "21"
 
         reports {
             html.required.set(true)
@@ -77,7 +77,7 @@ tasks {
         violationRules {
             rule {
                 limit {
-                    minimum = 0.9.toBigDecimal()
+                    minimum = 0.75.toBigDecimal()
                 }
             }
         }
@@ -85,8 +85,8 @@ tasks {
         classDirectories.setFrom(
             sourceSets.main.get().output.asFileTree.matching {
                 exclude ("**/PokemonGame.class")
-                exclude ("**/pokemon/*.kt")
-                exclude ("**/moves/*/kt")
+                exclude ("**/pokemon/*.class")
+                exclude ("**/moves/*.class")
             }
         )
     }

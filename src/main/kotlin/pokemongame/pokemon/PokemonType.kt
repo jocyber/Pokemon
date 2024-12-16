@@ -1,4 +1,4 @@
-package pokemongame.types
+package pokemongame.pokemon
 
 enum class PokemonType {
     NORMAL,
@@ -23,6 +23,7 @@ enum class PokemonType {
 
     companion object {
         const val HALF_EFFECTIVE = 0.5f
-        const val NORMALLLY_EFFECTIVE = 1f
+        const val NORMALLY_EFFECTIVE = 1f
+        const val SUPER_EFFECTIVE = 2f
     }
 }
