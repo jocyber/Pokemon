@@ -3,6 +3,7 @@ package pokemongame
 import pokemongame.pokemon.*
 import pokemongame.pokemon.state.MoveList
 import pokemongame.pokemon.state.PokemonInstance
+import pokemongame.scene.battle.BattleSceneState
 import pokemongame.scene.battle.display.BattleDisplay
 
 val battleDisplay =
@@ -18,7 +19,8 @@ val battleDisplay =
                 Zigzagoon,
                 level = 10,
                 moves = MoveList(Tackle),
-            )
+            ),
+        sceneState = BattleSceneState()
     )
 
 fun main() {

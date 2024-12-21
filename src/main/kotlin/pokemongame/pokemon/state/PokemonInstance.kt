@@ -3,10 +3,6 @@ package pokemongame.pokemon.state
 import pokemongame.pokemon.Pokemon
 import pokemongame.pokemon.PokemonMove
 
-// TODO: ivs, evs, actualStats, gender, etc
-// calculate total health based on data, ivs, evs, and level
-// this class should remain immutable. when leveling, make a copy and change some fields
-// so that the necessary calculations are run automatically with current health reset
 data class PokemonInstance(
     private val pokemon: Pokemon,
     val level: Int,

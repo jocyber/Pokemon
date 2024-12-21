@@ -29,10 +29,12 @@ if (Os.isFamily(Os.FAMILY_MAC)) {
 dependencies {
     implementation("io.arrow-kt:arrow-core:1.2.4")
 
-    testImplementation("io.kotest:kotest-runner-junit5:6.0.0.M1")
-    testImplementation("io.kotest:kotest-assertions-core:6.0.0.M1")
-    testImplementation("io.kotest:kotest-assertions-collections:6.0.0.M1")
-    testImplementation("io.kotest:kotest-assertions-arrow:6.0.0.M1")
+    val kotestVersion = "6.0.0.M1"
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-property:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-collections:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion")
     testImplementation("io.mockk:mockk:1.13.10")
 }
 
@@ -85,8 +87,6 @@ tasks {
         classDirectories.setFrom(
             sourceSets.main.get().output.asFileTree.matching {
                 exclude ("**/PokemonGame.class")
-                exclude ("**/pokemon/*.class")
-                exclude ("**/moves/*.class")
             }
         )
     }

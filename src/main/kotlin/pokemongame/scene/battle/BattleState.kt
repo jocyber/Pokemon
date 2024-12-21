@@ -5,11 +5,11 @@ import pokemongame.pokemon.state.PokemonInstance
 import pokemongame.scene.Weather
 
 data class BattleSceneState(
-    var player: EntityState,
-    var enemy: EntityState,
-    var weather: Weather,
-    var isSpecialScreenActive: Boolean = false,
-    var isPhysicalScreenActive: Boolean = false,
+    val player: EntityState,
+    val enemy: EntityState,
+    val weather: Weather,
+    val isSpecialScreenActive: Boolean = false,
+    val isPhysicalScreenActive: Boolean = false,
 ) {
     lateinit var currentTarget: EntityState
     lateinit var opposingTarget: EntityState
