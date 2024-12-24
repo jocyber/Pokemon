@@ -14,7 +14,7 @@ enum class Category {
 interface PokemonMove {
     val basePower: BasePower?
     val totalPowerPoints: PowerPoints
-    val accuracy: Accuracy
+    val accuracy: Accuracy?
     val isContactMove: Boolean
     val type: PokemonType
     val category: Category
@@ -24,6 +24,18 @@ interface PokemonMove {
         get() = 1
 
     val execute: (BattleSceneState) -> MoveExecutionResult?
+}
+
+data object DefenseCurl : PokemonMove {
+    override val basePower = null
+    override val totalPowerPoints = PowerPoints(40)
+    override val accuracy = null
+    override val isContactMove = false
+    override val type = NORMAL
+    override val category = Category.STATUS
+    override val priority = Priority(0)
+
+    override val execute = ::visitExecuteMove
 }
 
 data object SuckerPunch : PokemonMove {

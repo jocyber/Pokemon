@@ -4,6 +4,7 @@ import pokemongame.pokemon.PokemonMove
 import pokemongame.pokemon.state.PokemonInstance
 import pokemongame.scene.Weather
 
+// copies will need to be stored so moves that rely on previous actions can work
 data class BattleSceneState(
     val player: EntityState,
     val enemy: EntityState,
@@ -49,20 +50,33 @@ class BattleStats(
     val evasion: BattleStat = BattleStat.zero,
 )
 
-/** An integer that must be between 0 and 6 which represents stat increases mid-battle. */
+/** An integer that must be between -6 and 6 which represents stat increases mid-battle. */
 @JvmInline
 value class BattleStat private constructor(val value: Int) {
     companion object {
         operator fun invoke(value: Int) =
             when (value) {
-                in 0..6 -> BattleStat(value)
+                in -6..6 -> BattleStat(value)
                 else -> null
             }
 
         val zero = BattleStat(0)
+        val one = BattleStat(1)
+        val two = BattleStat(2)
+        val three = BattleStat(3)
+        val four = BattleStat(4)
+        val five = BattleStat(5)
+        val six = BattleStat(6)
+
+        val minusOne = BattleStat(-1)
+        val minusTwo = BattleStat(-2)
+        val minusThree = BattleStat(-3)
+        val minusFour = BattleStat(-4)
+        val minusFive = BattleStat(-5)
+        val minusSix = BattleStat(-6)
     }
 
-    operator fun plus(rhs: Int) = BattleStat(value + rhs)
+    operator fun plus(rhs: Int) = invoke(value + rhs)
 
     operator fun Int.plus(rhs: BattleStat) = rhs + this
 }

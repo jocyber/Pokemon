@@ -1,16 +1,17 @@
 package pokemongame.scene.battle
 
 import pokemongame.pokemon.Category.STATUS
+import pokemongame.pokemon.DefenseCurl
 import pokemongame.pokemon.SuckerPunch
 import pokemongame.pokemon.Tackle
 
-fun Tackle.visitExecuteMove(sceneState: BattleSceneState) = sceneState.defaultExecuteMove()
+fun DefenseCurl.visitExecuteMove(sceneState: BattleSceneState) =
+    sceneState.defaultExecuteMove(battleStatChange = BattleStats(defense = BattleStat.one))
 
 fun SuckerPunch.visitExecuteMove(sceneState: BattleSceneState): MoveExecutionResult? =
-    with(sceneState) {
-        if (opposingTarget.alreadyAttacked || opposingTarget.chosenMove.category == STATUS) {
-            null
-        } else {
-            defaultExecuteMove()
-        }
+    with(sceneState.opposingTarget) {
+        if (alreadyAttacked || chosenMove.category == STATUS) null
+        else sceneState.defaultExecuteMove()
     }
+
+fun Tackle.visitExecuteMove(sceneState: BattleSceneState) = sceneState.defaultExecuteMove()
