@@ -1,5 +1,8 @@
 package pokemongame.scene.battle.moves
 
-import io.kotest.core.spec.style.FreeSpec
+import pokemongame.pokemon.Tackle
+import pokemongame.scene.battle.MoveExecutionSharedTests
 
-class TackleTests : FreeSpec({})
+class TackleTests : MoveExecutionSharedTests(Tackle) {
+
+}

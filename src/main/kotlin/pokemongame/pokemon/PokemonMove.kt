@@ -23,7 +23,7 @@ interface PokemonMove {
     val turns: Int
         get() = 1
 
-    val execute: (BattleSceneState) -> MoveExecutionResult?
+    val execute: (BattleSceneState) -> MoveExecutionResult
 }
 
 data object DefenseCurl : PokemonMove {

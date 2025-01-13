@@ -4,7 +4,6 @@ import pokemongame.pokemon.PokemonMove
 import pokemongame.pokemon.state.PokemonInstance
 import pokemongame.scene.Weather
 
-// copies will need to be stored so moves that rely on previous actions can work
 data class BattleSceneState(
     val player: EntityState,
     val enemy: EntityState,
@@ -32,6 +31,7 @@ data class EntityState(
     val isFrozen: Boolean = false,
     val isParalyzed: Boolean = false,
     val isPoisoned: Boolean = false,
+    val movesUsed: Set<PokemonMove> = emptySet(),
 ) {
     val attack = battleStats.attack.value
     val defense = battleStats.defense.value

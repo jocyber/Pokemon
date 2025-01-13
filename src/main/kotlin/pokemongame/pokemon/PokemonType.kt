@@ -35,7 +35,7 @@ data class SuperEffective private constructor(override val multiplier: Float) : 
 
     override operator fun times(other: TypeEffectiveness) =
         when (other) {
-            is SuperEffective -> SuperEffective(multiplier * other.multiplier)
+            is SuperEffective -> SuperEffective(4f)
             is NormallyEffective -> SuperEffective()
             is NotVeryEffective -> NormallyEffective()
             is NotEffective -> NotEffective()
@@ -67,7 +67,7 @@ data class NotVeryEffective private constructor(override val multiplier: Float) 
         when (other) {
             is SuperEffective -> NormallyEffective()
             is NormallyEffective -> NotVeryEffective()
-            is NotVeryEffective -> NotVeryEffective(multiplier * other.multiplier)
+            is NotVeryEffective -> NotVeryEffective(0.25f)
             is NotEffective -> NotEffective()
         }
 }

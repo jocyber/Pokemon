@@ -8,9 +8,9 @@ import pokemongame.pokemon.Tackle
 fun DefenseCurl.visitExecuteMove(sceneState: BattleSceneState) =
     sceneState.defaultExecuteMove(battleStatChange = BattleStats(defense = BattleStat.one))
 
-fun SuckerPunch.visitExecuteMove(sceneState: BattleSceneState): MoveExecutionResult? =
+fun SuckerPunch.visitExecuteMove(sceneState: BattleSceneState) =
     with(sceneState.opposingTarget) {
-        if (alreadyAttacked || chosenMove.category == STATUS) null
+        if (alreadyAttacked || chosenMove.category == STATUS) MoveExecutionResult.Failed
         else sceneState.defaultExecuteMove()
     }
 
