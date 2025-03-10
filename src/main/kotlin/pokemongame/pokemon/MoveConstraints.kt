@@ -8,12 +8,12 @@ value class Accuracy(val value: Int) {
 }
 
 @JvmInline
-value class Priority(val value: Int) {
+value class Priority(val value: Int) : Comparable<Priority> {
     init {
         require(value in 0..4)
     }
 
-    operator fun compareTo(other: Priority) = value.compareTo(other.value)
+    override operator fun compareTo(other: Priority) = value.compareTo(other.value)
 }
 
 @JvmInline

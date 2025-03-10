@@ -43,9 +43,10 @@ fun BattleSceneState.defaultExecuteMove(
 
     return when {
         chosenMove.category == Category.STATUS ->
-            MoveExecutionResult.StatusMove(battleStatChange, target)
-        isInvulnerable ?: target.isInvulnerable -> MoveExecutionResult.Missed
+            if (target === opposingTarget && target.isFainted) MoveExecutionResult.Failed
+            else MoveExecutionResult.StatusMove(battleStatChange, target)
         target.isFainted -> MoveExecutionResult.Failed
+        isInvulnerable ?: target.isInvulnerable -> MoveExecutionResult.Missed
         else -> {
             val effectiveness = target.pokemonInstance.typeEffectiveness(chosenMove.type)
             val opposingDamage =

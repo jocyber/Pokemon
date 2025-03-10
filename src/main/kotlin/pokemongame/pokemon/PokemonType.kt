@@ -38,7 +38,7 @@ data class SuperEffective private constructor(override val multiplier: Float) : 
             is SuperEffective -> SuperEffective(4f)
             is NormallyEffective -> SuperEffective()
             is NotVeryEffective -> NormallyEffective()
-            is NotEffective -> NotEffective()
+            else -> other
         }
 }
 
@@ -48,13 +48,7 @@ data class NormallyEffective private constructor(override val multiplier: Float)
         operator fun invoke() = NormallyEffective(multiplier = 1f)
     }
 
-    override operator fun times(other: TypeEffectiveness) =
-        when (other) {
-            is SuperEffective -> SuperEffective()
-            is NormallyEffective -> NormallyEffective()
-            is NotVeryEffective -> NotVeryEffective()
-            is NotEffective -> NotEffective()
-        }
+    override operator fun times(other: TypeEffectiveness) = other
 }
 
 data class NotVeryEffective private constructor(override val multiplier: Float) :
@@ -68,7 +62,7 @@ data class NotVeryEffective private constructor(override val multiplier: Float) 
             is SuperEffective -> NormallyEffective()
             is NormallyEffective -> NotVeryEffective()
             is NotVeryEffective -> NotVeryEffective(0.25f)
-            is NotEffective -> NotEffective()
+            else -> other
         }
 }
 
@@ -77,11 +71,5 @@ data class NotEffective private constructor(override val multiplier: Float) : Ty
         operator fun invoke() = NotEffective(multiplier = 0f)
     }
 
-    override operator fun times(other: TypeEffectiveness) =
-        when (other) {
-            is SuperEffective -> NotEffective()
-            is NormallyEffective -> NotEffective()
-            is NotVeryEffective -> NotEffective()
-            is NotEffective -> NotEffective()
-        }
+    override operator fun times(other: TypeEffectiveness) = this
 }

@@ -5,8 +5,8 @@ import pokemongame.pokemon.state.PokemonInstance
 import pokemongame.scene.Weather
 
 data class BattleSceneState(
-    val player: EntityState,
-    val enemy: EntityState,
+    val playerState: EntityState,
+    val enemyState: EntityState,
     val weather: Weather,
     val isSpecialScreenActive: Boolean = false,
     val isPhysicalScreenActive: Boolean = false,
@@ -50,7 +50,7 @@ class BattleStats(
     val evasion: BattleStat = BattleStat.zero,
 )
 
-/** An integer that must be between -6 and 6 which represents stat increases mid-battle. */
+/** An integer with a range of [-6, 6] which represents stat increases mid-battle. */
 @JvmInline
 value class BattleStat private constructor(val value: Int) {
     companion object {
